@@ -29,22 +29,9 @@
 		5FE240FE2D94CF4100E8640A /* HuntandCrawlUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HuntandCrawlUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		5FDFECC02DA59B3600FA46C2 /* Exceptions for "HuntandCrawl" folder in "HuntandCrawl" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Info.plist,
-			);
-			target = 5FE240E12D94CF3E00E8640A /* HuntandCrawl */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		5FE240E42D94CF3E00E8640A /* HuntandCrawl */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				5FDFECC02DA59B3600FA46C2 /* Exceptions for "HuntandCrawl" folder in "HuntandCrawl" target */,
-			);
 			path = HuntandCrawl;
 			sourceTree = "<group>";
 		};
@@ -334,8 +321,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = HuntandCrawl/Info.plist;
+				INFOPLIST_FILE = HuntandCrawl/SupportFiles/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
@@ -393,8 +379,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = HuntandCrawl/Info.plist;
+				INFOPLIST_FILE = HuntandCrawl/SupportFiles/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -415,8 +400,7 @@
 				DEVELOPMENT_ASSET_PATHS = "\"HuntandCrawl/Preview Content\"";
 				DEVELOPMENT_TEAM = 994A76T72B;
 				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = HuntandCrawl/Info.plist;
+				INFOPLIST_FILE = HuntandCrawl/SupportFiles/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -427,7 +411,6 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.ccandelora.HuntandCrawl;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -445,8 +428,7 @@
 				DEVELOPMENT_ASSET_PATHS = "\"HuntandCrawl/Preview Content\"";
 				DEVELOPMENT_TEAM = 994A76T72B;
 				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = HuntandCrawl/Info.plist;
+				INFOPLIST_FILE = HuntandCrawl/SupportFiles/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -457,7 +439,6 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.ccandelora.HuntandCrawl;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -472,11 +453,9 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 994A76T72B;
-				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = HuntandCrawl/Info.plist;
+				INFOPLIST_FILE = HuntandCrawl/SupportFiles/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.ccandelora.HuntandCrawlTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
@@ -492,11 +471,9 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 994A76T72B;
-				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = HuntandCrawl/Info.plist;
+				INFOPLIST_FILE = HuntandCrawl/SupportFiles/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.ccandelora.HuntandCrawlTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
@@ -511,10 +488,8 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 994A76T72B;
-				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = HuntandCrawl/Info.plist;
+				INFOPLIST_FILE = HuntandCrawl/SupportFiles/Info.plist;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.ccandelora.HuntandCrawlUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
@@ -529,10 +504,8 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 994A76T72B;
-				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = HuntandCrawl/Info.plist;
+				INFOPLIST_FILE = HuntandCrawl/SupportFiles/Info.plist;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.ccandelora.HuntandCrawlUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;

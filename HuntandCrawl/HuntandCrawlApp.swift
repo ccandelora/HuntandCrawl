@@ -10,14 +10,30 @@ import SwiftData
 
 @main
 struct HuntandCrawlApp: App {
+    @State var networkMonitor = NetworkMonitor()
+    
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
-            Item.self,
+            Hunt.self,
+            Task.self,
+            TaskCompletion.self,
+            BarCrawl.self,
+            BarStop.self,
+            BarStopVisit.self,
+            User.self,
+            Team.self,
+            SyncEvent.self
         ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 
         do {
-            return try ModelContainer(for: schema, configurations: [modelConfiguration])
+            let container = try ModelContainer(for: schema, configurations: [modelConfiguration])
+            
+            @MainActor func prepopulateIfNeeded() {
+                // Pre-populate data if needed on first launch
+            }
+            
+            return container
         } catch {
             fatalError("Could not create ModelContainer: \(error)")
         }
@@ -25,8 +41,15 @@ struct HuntandCrawlApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            // Check Network Status and Inject NetworkMonitor
+            if networkMonitor.isConnected {
+                MainTabView()
+            } else {
+                // Show an offline view or alert
+                OfflineView()
+            }
         }
         .modelContainer(sharedModelContainer)
+        .environment(networkMonitor)
     }
 }

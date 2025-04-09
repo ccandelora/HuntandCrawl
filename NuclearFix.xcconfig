@@ -1,0 +1,6 @@
+// Nuclear fix for Info.plist issues
+GENERATE_INFOPLIST_FILE = NO
+INFOPLIST_FILE = /Users/ccandelora/Sites/native_apps/cruise/HuntandCrawl/HuntandCrawl/Info.plist
+PRODUCT_BUNDLE_IDENTIFIER = com.huntandcrawl.app
+SWIFT_VERSION = 5.0
+IPHONEOS_DEPLOYMENT_TARGET = 17.0

@@ -29,22 +29,9 @@
 		5FE240FE2D94CF4100E8640A /* HuntandCrawlUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HuntandCrawlUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		5FDFECC02DA59B3600FA46C2 /* Exceptions for "HuntandCrawl" folder in "HuntandCrawl" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Info.plist,
-			);
-			target = 5FE240E12D94CF3E00E8640A /* HuntandCrawl */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		5FE240E42D94CF3E00E8640A /* HuntandCrawl */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				5FDFECC02DA59B3600FA46C2 /* Exceptions for "HuntandCrawl" folder in "HuntandCrawl" target */,
-			);
 			path = HuntandCrawl;
 			sourceTree = "<group>";
 		};
@@ -285,6 +272,8 @@
 		5FE241062D94CF4200E8640A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				INFOPLIST_FILE = "HuntandCrawl/SupportFiles/Info.plist";
+				INFOPLIST_FILE = "HuntandCrawl/SupportFiles/Info.plist";
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -334,8 +323,6 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = HuntandCrawl/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
@@ -350,6 +337,8 @@
 		5FE241072D94CF4200E8640A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				INFOPLIST_FILE = "HuntandCrawl/SupportFiles/Info.plist";
+				INFOPLIST_FILE = "HuntandCrawl/SupportFiles/Info.plist";
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -393,8 +382,6 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = HuntandCrawl/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -408,6 +395,8 @@
 		5FE241092D94CF4200E8640A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				INFOPLIST_FILE = "HuntandCrawl/SupportFiles/Info.plist";
+				INFOPLIST_FILE = "HuntandCrawl/SupportFiles/Info.plist";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
@@ -415,8 +404,6 @@
 				DEVELOPMENT_ASSET_PATHS = "\"HuntandCrawl/Preview Content\"";
 				DEVELOPMENT_TEAM = 994A76T72B;
 				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = HuntandCrawl/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -427,7 +414,6 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.ccandelora.HuntandCrawl;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -438,6 +424,8 @@
 		5FE2410A2D94CF4200E8640A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				INFOPLIST_FILE = "HuntandCrawl/SupportFiles/Info.plist";
+				INFOPLIST_FILE = "HuntandCrawl/SupportFiles/Info.plist";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
@@ -445,8 +433,6 @@
 				DEVELOPMENT_ASSET_PATHS = "\"HuntandCrawl/Preview Content\"";
 				DEVELOPMENT_TEAM = 994A76T72B;
 				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = HuntandCrawl/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -457,7 +443,6 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.ccandelora.HuntandCrawl;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -468,15 +453,14 @@
 		5FE2410C2D94CF4200E8640A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				INFOPLIST_FILE = "HuntandCrawl/SupportFiles/Info.plist";
+				INFOPLIST_FILE = "HuntandCrawl/SupportFiles/Info.plist";
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 994A76T72B;
-				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = HuntandCrawl/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.ccandelora.HuntandCrawlTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
@@ -488,15 +472,14 @@
 		5FE2410D2D94CF4200E8640A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				INFOPLIST_FILE = "HuntandCrawl/SupportFiles/Info.plist";
+				INFOPLIST_FILE = "HuntandCrawl/SupportFiles/Info.plist";
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 994A76T72B;
-				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = HuntandCrawl/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.ccandelora.HuntandCrawlTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
@@ -508,13 +491,12 @@
 		5FE2410F2D94CF4200E8640A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				INFOPLIST_FILE = "HuntandCrawl/SupportFiles/Info.plist";
+				INFOPLIST_FILE = "HuntandCrawl/SupportFiles/Info.plist";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 994A76T72B;
-				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = HuntandCrawl/Info.plist;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.ccandelora.HuntandCrawlUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
@@ -526,13 +508,12 @@
 		5FE241102D94CF4200E8640A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				INFOPLIST_FILE = "HuntandCrawl/SupportFiles/Info.plist";
+				INFOPLIST_FILE = "HuntandCrawl/SupportFiles/Info.plist";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 994A76T72B;
-				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = HuntandCrawl/Info.plist;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.ccandelora.HuntandCrawlUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
