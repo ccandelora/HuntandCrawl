@@ -60,7 +60,7 @@ struct HuntDetailView: View {
                         Text("\(totalPoints) total points") // Calculate total points
                         Spacer()
                         Image(systemName: "person.3.fill").foregroundColor(.secondary)
-                        Text("\(hunt.participants?.count ?? 0) participants") // Assuming participants relationship
+                        Text("\(participantCount) participants")
                     }
                     .font(.caption)
                     .foregroundColor(.secondary)
@@ -162,18 +162,37 @@ struct HuntDetailView: View {
         hunt.tasks?.reduce(0) { $0 + $1.points } ?? 0
     }
     
+    // Calculate participant count
+    private var participantCount: Int {
+        guard let tasks = hunt.tasks else { return 0 }
+        
+        // Estimate participants based on unique user IDs in completions
+        var uniqueUserIds = Set<String>()
+        
+        for task in tasks {
+            if let completions = task.completions {
+                for completion in completions {
+                    uniqueUserIds.insert(completion.userId)
+                }
+            }
+        }
+        
+        // If no completions, return a default of 0
+        return uniqueUserIds.count
+    }
+    
     // Check if a task is completed (placeholder)
     private func isTaskCompleted(_ task: Task) -> Bool {
-        // Query for task completions
-        let fetchDescriptor = FetchDescriptor<TaskCompletion>(
-            predicate: #Predicate { completion in
-                completion.taskId == task.id
-            }
-        )
-        
+        // Use a different approach without complex predicates
         do {
-            let completions = try modelContext.fetch(fetchDescriptor)
-            return !completions.isEmpty
+            // Get all completions
+            let fetchDescriptor = FetchDescriptor<TaskCompletion>()
+            let allCompletions = try modelContext.fetch(fetchDescriptor)
+            
+            // Filter manually
+            return allCompletions.contains { completion in 
+                return completion.task?.id == task.id && completion.isVerified
+            }
         } catch {
             print("Error checking task completion: \(error)")
             return false

@@ -248,17 +248,18 @@ struct BarStopVisitView: View {
     }
     
     private func loadOrCreateVisit() {
-        // Check if we already have a visit for this bar stop and user
-        let descriptor = FetchDescriptor<BarStopVisit>(
-            predicate: #Predicate<BarStopVisit> { visit in
-                visit.barStop?.id == self.barStop.id &&
-                visit.user?.id == self.user.id
-            }
-        )
-        
+        // Use a simpler approach without complex predicates
         do {
-            let existingVisits = try modelContext.fetch(descriptor)
-            if let existingVisit = existingVisits.first {
+            // Get all visits
+            let descriptor = FetchDescriptor<BarStopVisit>()
+            let allVisits = try modelContext.fetch(descriptor)
+            
+            // Find matching visit manually
+            let existingVisit = allVisits.first { visit in
+                return visit.barStop?.id == self.barStop.id && visit.user?.id == self.user.id
+            }
+            
+            if let existingVisit = existingVisit {
                 visit = existingVisit
                 
                 // Load existing values
@@ -348,7 +349,7 @@ struct BarStopVisitView: View {
 struct BarStopVisitView_Previews: PreviewProvider {
     static var previews: some View {
         let config = ModelConfiguration(isStoredInMemoryOnly: true)
-        let container = try! ModelContainer(for: [BarStop.self, User.self, BarStopVisit.self], configurations: config)
+        let container = try! ModelContainer(for: BarStop.self, User.self, BarStopVisit.self, configurations: config)
         
         let user = User(name: "Test User", email: "test@example.com")
         

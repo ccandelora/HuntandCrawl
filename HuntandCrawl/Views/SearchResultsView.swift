@@ -41,9 +41,17 @@ struct SearchResultsView: View {
             // Search results
             List {
                 if searchText.isEmpty {
-                    ContentUnavailableView("Search", systemImage: "magnifyingglass", description: Text("Enter a search term to find hunts, bar crawls, and users"))
+                    ContentUnavailableView(
+                        "Search", 
+                        systemImage: "magnifyingglass", 
+                        description: Text("Enter a search term to find hunts, bar crawls, and users")
+                    )
                 } else if noResults {
-                    ContentUnavailableView("No Results", systemImage: "magnifyingglass", description: Text("No matches for '\(searchText)'"))
+                    ContentUnavailableView(
+                        "No Results", 
+                        systemImage: "magnifyingglass", 
+                        description: Text("No matches for '\(searchText)'")
+                    )
                 } else {
                     // Hunts section
                     if selectedFilter == .all || selectedFilter == .hunts {
@@ -80,7 +88,7 @@ struct SearchResultsView: View {
                                 ForEach(filteredUsers) { user in
                                     UserRow(user: user)
                                         .onTapGesture {
-                                            navigationManager.navigateToUserProfile(user)
+                                            navigationManager.navigateToUser(user)
                                         }
                                 }
                             }
@@ -112,7 +120,7 @@ struct SearchResultsView: View {
         } else {
             return barCrawls.filter {
                 $0.name.localizedCaseInsensitiveContains(searchText) ||
-                ($0.description?.localizedCaseInsensitiveContains(searchText) ?? false)
+                ($0.barCrawlDescription?.localizedCaseInsensitiveContains(searchText) ?? false)
             }
         }
     }
@@ -121,9 +129,10 @@ struct SearchResultsView: View {
         if searchText.isEmpty {
             return []
         } else {
-            return users.filter {
-                $0.displayName.localizedCaseInsensitiveContains(searchText) ||
-                $0.username.localizedCaseInsensitiveContains(searchText)
+            return users.filter { user in
+                let matchesDisplayName = user.displayName.localizedCaseInsensitiveContains(searchText)
+                let matchesName = user.name.localizedCaseInsensitiveContains(searchText)
+                return matchesDisplayName || matchesName
             }
         }
     }
@@ -191,7 +200,7 @@ struct BarCrawlRow: View {
             Text(barCrawl.name)
                 .font(.headline)
             
-            if let description = barCrawl.description {
+            if let description = barCrawl.barCrawlDescription {
                 Text(description)
                     .font(.subheadline)
                     .foregroundColor(.secondary)
@@ -229,18 +238,25 @@ struct UserRow: View {
     
     var body: some View {
         HStack(spacing: 12) {
-            // Profile image
-            Image(systemName: "person.circle.fill")
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(width: 40, height: 40)
-                .foregroundColor(.blue)
+            if let profileImage = user.profileImage, let uiImage = UIImage(data: profileImage) {
+                Image(uiImage: uiImage)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 40, height: 40)
+                    .clipShape(Circle())
+            } else {
+                Image(systemName: "person.circle.fill")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 40, height: 40)
+                    .foregroundColor(.blue)
+            }
             
             VStack(alignment: .leading) {
                 Text(user.displayName)
                     .font(.headline)
                 
-                Text("@\(user.username)")
+                Text("@\(user.name)")
                     .font(.subheadline)
                     .foregroundColor(.secondary)
             }

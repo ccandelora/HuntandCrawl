@@ -132,8 +132,12 @@ struct MainTabView: View {
         locationManager.checkLocationAuthorization()
         locationManager.startLocationUpdates()
         
-        // Initialize sync manager
+        // Initialize sync manager with the current modelContext
         syncManager.initialize(modelContext: modelContext)
+        
+        // Print debug info
+        print("MainTabView: Managers initialized")
+        print("MainTabView: ModelContext available: \(modelContext != nil)")
     }
     
     private func handleSyncStatusChange(_ status: SyncManager.SyncStatus) {

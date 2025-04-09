@@ -2,6 +2,36 @@ import SwiftUI
 import SwiftData
 import PhotosUI
 import CoreLocation
+import _Concurrency
+
+// Simple class with a callback approach
+class TaskPhotoLoader {
+    func loadPhoto(from item: PhotosPickerItem, completion: @escaping (Data?) -> Void) {
+        // Use callback API directly
+        item.loadTransferable(type: Data.self) { result in
+            switch result {
+            case .success(let data):
+                completion(data)
+            case .failure:
+                completion(nil)
+            }
+        }
+    }
+}
+
+// Define our own PhotoProcessor class here to make the above code valid
+fileprivate class PhotoProcessor {
+    func process(item: PhotosPickerItem, completion: @escaping (Data?) -> Void) {
+        item.loadTransferable(type: Data.self) { result in
+            switch result {
+            case .success(let data):
+                completion(data)
+            case .failure:
+                completion(nil)
+            }
+        }
+    }
+}
 
 struct TaskCompletionView: View {
     @Environment(\.modelContext) private var modelContext
@@ -20,37 +50,54 @@ struct TaskCompletionView: View {
     @State private var isSaving = false
     @State private var alreadyCompletedMessage: String? = nil
 
+    private let photoLoader = TaskPhotoLoader()
+
     var body: some View {
-        VStack(alignment: .leading, spacing: 15) {
-            if let message = alreadyCompletedMessage {
-                Text(message)
-                    .font(.headline)
-                    .padding()
-            } else {
-                Text("Task: \(task.title)")
-                    .font(.title)
-
-                if let description = task.taskDescription, !description.isEmpty {
-                    Text(description)
-                        .font(.body)
+        ScrollView {
+            VStack(alignment: .leading, spacing: 20) {
+                if let message = alreadyCompletedMessage {
+                    Text(message)
+                        .foregroundColor(.green)
+                        .padding()
+                        .background(Color.green.opacity(0.1))
+                        .cornerRadius(8)
+                        .padding(.horizontal)
                 }
-                Text("Points: \(task.points)")
-                    .font(.headline)
-
+                
+                if let message = verificationStatusMessage {
+                    Text(message)
+                        .foregroundColor(message.contains("Error") ? .red : .primary)
+                        .padding()
+                        .background(message.contains("Error") ? Color.red.opacity(0.1) : Color.gray.opacity(0.1))
+                        .cornerRadius(8)
+                        .padding(.horizontal)
+                }
+                
+                // Task Details
+                VStack(alignment: .leading, spacing: 8) {
+                    Text(task.title)
+                        .font(.title2)
+                        .fontWeight(.bold)
+                    
+                    Text("\(task.points) points")
+                        .font(.headline)
+                        .foregroundColor(.blue)
+                    
+                    if let description = task.taskDescription {
+                        Text(description)
+                            .padding(.top, 4)
+                    }
+                }
+                .padding()
+                
                 Divider()
-
+                    .padding(.horizontal)
+                
+                // Verification Method
                 completionMethodView
-
-                Spacer()
-
-                if let status = verificationStatusMessage {
-                    Text(status)
-                        .foregroundColor(status.contains("Success") ? .green : .red)
-                        .padding(.vertical)
-                }
+                    .padding()
             }
         }
-        .padding()
         .navigationTitle("Complete Task")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
@@ -68,12 +115,14 @@ struct TaskCompletionView: View {
         }
         .onAppear(perform: loadOrCreateCompletion)
         .onChange(of: selectedPhotoItem) { // Corrected onChange usage
-             Task {
-                 if let data = try? await selectedPhotoItem?.loadTransferable(type: Data.self) {
-                     evidenceImageData = data
-                     // Immediately try to save if photo is the only requirement
-                     if task.verificationMethod == .photo {
-                         saveCompletion()
+             if let photoItem = selectedPhotoItem {
+                 photoLoader.loadPhoto(from: photoItem) { data in
+                     if let data = data {
+                         evidenceImageData = data
+                         // Immediately try to save if photo is the only requirement
+                         if task.verificationMethod == VerificationMethod.photo.rawValue {
+                             saveCompletion()
+                         }
                      }
                  }
              }
@@ -183,14 +232,16 @@ struct TaskCompletionView: View {
         // Find current user - in a real app, you'd get this from UserManager or similar
         let currentUserId = "currentUser" // Replace with actual user ID or fetch from user service
         
-        let predicate = #Predicate<TaskCompletion> { 
-            $0.task?.id == task.id && $0.userId == currentUserId
-        }
-        let descriptor = FetchDescriptor(predicate: predicate)
-
+        // Use a simpler approach without complex predicates
         do {
-            let fetchedCompletions = try modelContext.fetch(descriptor)
-            if let existingCompletion = fetchedCompletions.first {
+            // Get all completions
+            let fetchDescriptor = FetchDescriptor<TaskCompletion>()
+            let allCompletions = try modelContext.fetch(fetchDescriptor)
+            
+            // Filter manually
+            if let existingCompletion = allCompletions.first(where: { 
+                $0.task?.id == task.id && $0.userId == currentUserId
+            }) {
                 self.completion = existingCompletion
                 // Check if already verified to show message
                 if existingCompletion.isVerified {
@@ -210,11 +261,13 @@ struct TaskCompletionView: View {
                 }
             } else {
                 // Create a new completion instance but don't insert yet
+                let verificationMethodEnum = getVerificationMethodEnum(from: task.verificationMethod)
+                
                 self.completion = TaskCompletion(
                     task: task,
                     userId: currentUserId,
                     completedAt: Date(),
-                    verificationMethod: task.verificationMethod,
+                    verificationMethod: verificationMethodEnum,
                     isVerified: false
                 )
             }
@@ -222,13 +275,29 @@ struct TaskCompletionView: View {
             print("Error fetching TaskCompletion: \(error)")
             verificationStatusMessage = "Error loading completion status."
             // Create a new one if fetching fails
+            let verificationMethodEnum = getVerificationMethodEnum(from: task.verificationMethod)
+            
             self.completion = TaskCompletion(
                 task: task,
                 userId: currentUserId,
                 completedAt: Date(),
-                verificationMethod: task.verificationMethod,
+                verificationMethod: verificationMethodEnum,
                 isVerified: false
             )
+        }
+    }
+    
+    // Helper function to convert from String to VerificationMethod enum
+    private func getVerificationMethodEnum(from string: String) -> VerificationMethod {
+        switch string {
+        case VerificationMethod.photo.rawValue:
+            return .photo
+        case VerificationMethod.location.rawValue:
+            return .location
+        case VerificationMethod.question.rawValue:
+            return .question
+        default:
+            return .manual
         }
     }
 
@@ -287,7 +356,7 @@ struct TaskCompletionView: View {
         // Create or update the completion
         if completion == nil {
             completion = TaskCompletion(
-                taskId: task.id,
+                task: task,
                 userId: "currentUser", // Replace with actual user ID
                 completedAt: Date(),
                 isVerified: false // Will be set based on verification
@@ -299,9 +368,6 @@ struct TaskCompletionView: View {
             } else if isQuestionVerification {
                 completion?.answer = typedAnswer
             }
-            
-            // Store reference to the task
-            completion?.task = task
             
             // Set verified state based on method and evidence
             if let comp = completion {

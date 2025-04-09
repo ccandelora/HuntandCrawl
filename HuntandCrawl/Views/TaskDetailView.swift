@@ -7,17 +7,18 @@ struct TaskDetailView: View {
     @Environment(\.dismiss) private var dismiss
     
     let task: Task
-    @State private var showingConfirmationDialog = false
+    
     @State private var showingCompleteTaskSheet = false
+    @State private var showingConfirmationDialog = false
     
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 16) {
-                // Task Header
+            VStack(spacing: 20) {
+                // Header Section
                 VStack(alignment: .leading, spacing: 8) {
                     HStack {
                         Text(task.title)
-                            .font(.title)
+                            .font(.title2)
                             .fontWeight(.bold)
                         
                         Spacer()
@@ -25,22 +26,14 @@ struct TaskDetailView: View {
                         PointsBadge(points: task.points)
                     }
                     
-                    if let hunt = task.hunt {
-                        NavigationLink {
-                            // Navigate to hunt detail
-                        } label: {
-                            Label(hunt.name, systemImage: "map")
-                                .font(.subheadline)
-                                .foregroundColor(.purple)
-                        }
+                    if let subtitle = task.subtitle {
+                        Text(subtitle)
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
                     }
-                    
-                    Text("Created on \(formatDate(task.createdAt))")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
                 }
                 .padding()
-                .background(Color.gray.opacity(0.1))
+                .background(Color.blue.opacity(0.05))
                 .cornerRadius(12)
                 
                 // Description Section
@@ -64,25 +57,26 @@ struct TaskDetailView: View {
                     
                     HStack(spacing: 16) {
                         VerificationMethodBadge(
-                            isEnabled: task.requiresPhoto,
+                            isEnabled: task.verificationMethod == VerificationMethod.photo.rawValue,
                             systemImage: "camera.fill",
                             label: "Photo"
                         )
                         
                         VerificationMethodBadge(
-                            isEnabled: task.requiresLocation,
+                            isEnabled: task.verificationMethod == VerificationMethod.location.rawValue,
                             systemImage: "location.fill",
                             label: "Location"
                         )
                         
                         VerificationMethodBadge(
-                            isEnabled: task.requiresAnswer,
+                            isEnabled: task.verificationMethod == VerificationMethod.question.rawValue,
                             systemImage: "questionmark.circle.fill",
                             label: "Answer"
                         )
                     }
                     
-                    if task.requiresAnswer, let question = task.question, !question.isEmpty {
+                    if task.verificationMethod == VerificationMethod.question.rawValue, 
+                       let question = task.question, !question.isEmpty {
                         VStack(alignment: .leading, spacing: 4) {
                             Text("Question")
                                 .font(.subheadline)
@@ -98,7 +92,8 @@ struct TaskDetailView: View {
                         .padding(.top, 8)
                     }
                     
-                    if task.requiresLocation, let latitude = task.locationLatitude, let longitude = task.locationLongitude {
+                    if task.verificationMethod == VerificationMethod.location.rawValue, 
+                       let latitude = task.latitude, let longitude = task.longitude {
                         VStack(alignment: .leading, spacing: 4) {
                             Text("Location")
                                 .font(.subheadline)
@@ -284,9 +279,11 @@ struct CompletionRow: View {
                         .font(.subheadline)
                         .fontWeight(.medium)
                     
-                    Text("Completed on \(formatDate(completion.completedDate))")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
+                    if let completedDate = completion.completedAt {
+                        Text("Completed on \(formatDate(completedDate))")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
                 }
             } else {
                 Image(systemName: "person.circle.fill")
@@ -331,11 +328,12 @@ struct CompletionRow: View {
 
 extension TaskCompletion {
     var hasPhoto: Bool {
-        return photoData != nil
+        return evidenceData != nil
     }
     
     var hasLocation: Bool {
-        return locationLatitude != nil && locationLongitude != nil
+        // We can only check if the verification method is location-based
+        return verificationMethod == .location
     }
     
     var hasAnswer: Bool {
@@ -352,13 +350,14 @@ extension TaskCompletion {
 
 extension Task {
     static var example: Task {
-        let task = Task(title: "Find the secret mural", points: 150)
-        task.taskDescription = "Locate the hidden mural in the downtown area and take a photo as proof. The mural was painted by a local artist in 2022."
-        task.requiresPhoto = true
-        task.requiresLocation = true
-        task.requiresAnswer = false
-        task.locationLatitude = 37.7749
-        task.locationLongitude = -122.4194
+        let task = Task(
+            title: "Find the secret mural", 
+            taskDescription: "Locate the hidden mural in the downtown area and take a photo as proof. The mural was painted by a local artist in 2022.",
+            points: 150,
+            verificationMethod: .photo,
+            latitude: 37.7749,
+            longitude: -122.4194
+        )
         return task
     }
 } 

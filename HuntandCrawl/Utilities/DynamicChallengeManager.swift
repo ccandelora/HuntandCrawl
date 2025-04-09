@@ -38,7 +38,7 @@ class DynamicChallengeManager: ObservableObject {
     }
     
     // Generate a team challenge
-    func generateTeamChallenge(for hunt: Hunt, teamId: UUID) -> AnyPublisher<Task, Error> {
+    func generateTeamChallenge(for hunt: Hunt, teamId: String) -> AnyPublisher<Task, Error> {
         return Future<Task, Error> { [weak self] promise in
             guard let self = self else {
                 promise(.failure(NSError(domain: "DynamicChallengeManager", code: 0, userInfo: [NSLocalizedDescriptionKey: "Self is nil"])))
@@ -60,33 +60,32 @@ class DynamicChallengeManager: ObservableObject {
             
             // Create the challenge task
             let task = Task(
-                hunt: hunt,
-                name: challengeTitle,
-                description: "Complete this challenge with your team members!",
+                title: challengeTitle,
+                taskDescription: "Complete this challenge with your team members!",
                 points: Int.random(in: 50...150),
-                latitude: 0,
-                longitude: 0,
                 verificationMethod: .photo,
-                order: hunt.tasks.count + 1
+                latitude: self.locationManager?.userLocation?.coordinate.latitude,
+                longitude: self.locationManager?.userLocation?.coordinate.longitude,
+                order: (hunt.tasks?.count ?? 0) + 1
             )
             
-            // Set dynamic and team-specific properties
-            task.isDynamic = true
-            task.teamId = teamId
+            // Set hunt relationship
+            task.hunt = hunt
             
-            // Set location to current location if available
-            if let location = self.locationManager?.userLocation {
-                task.latitude = location.coordinate.latitude
-                task.longitude = location.coordinate.longitude
-            }
+            // Add team and time metadata as persistent notes
+            let metadataNote = """
+            Team Challenge:
+            - Team ID: \(teamId)
+            - Generated: \(Date().formatted())
+            - Expires: \(Date().addingTimeInterval(3600).formatted())
+            - Requires \(self.minimumTeamMembersRequired) team members
+            """
             
-            // Add expiration time (1 hour from now)
-            task.expiresAt = Date().addingTimeInterval(3600)
-            task.generatedAt = Date()
-            task.minimumTeamMembers = self.minimumTeamMembersRequired
+            // Store this metadata in an existing field like subtitle or in a new field if available
+            task.subtitle = metadataNote
             
             // Add it to the hunt
-            hunt.tasks.append(task)
+            hunt.tasks?.append(task)
             self.modelContext.insert(task)
             
             do {
@@ -112,32 +111,73 @@ class DynamicChallengeManager: ObservableObject {
     
     // Check if a challenge is eligible for completion
     func isEligibleForCompletion(task: Task) -> Bool {
-        // Make sure it's a dynamic challenge
-        guard task.isDynamic else { return false }
-        
-        // Make sure it has a team ID
-        guard let teamId = task.teamId else { return false }
-        
-        // Make sure it hasn't expired
-        guard !task.isExpired else { return false }
+        // Parse metadata from subtitle to check dynamic status, expiration, etc.
+        guard let subtitle = task.subtitle,
+              subtitle.contains("Team Challenge:"),
+              !isExpired(task: task) else {
+            return false
+        }
         
         // For now, we don't enforce team member proximity without Bluetooth
         // Just check if the task is within its time window
         return true
     }
     
-    // Fetch active team challenges for a team
-    func fetchActiveChallengesForTeam(_ teamId: UUID) -> [Task] {
-        do {
-            let predicate = #Predicate<Task> { task in
-                task.isDynamic == true &&
-                task.teamId == teamId &&
-                (task.expiresAt == nil || task.expiresAt! > Date()) &&
-                task.isCompleted == false
+    // Helper function to check if task is expired based on metadata
+    private func isExpired(task: Task) -> Bool {
+        guard let subtitle = task.subtitle else { return false }
+        
+        // Extract expiration time from metadata
+        if let expiresRange = subtitle.range(of: "Expires: ") {
+            let expiresStart = expiresRange.upperBound
+            if let endOfLine = subtitle[expiresStart...].firstIndex(of: "\n") {
+                let expiresString = String(subtitle[expiresStart..<endOfLine])
+                
+                let formatter = DateFormatter()
+                formatter.dateStyle = .medium
+                formatter.timeStyle = .medium
+                
+                if let expiresDate = formatter.date(from: expiresString) {
+                    return Date() > expiresDate
+                }
             }
+        }
+        
+        return false // Default to not expired if can't determine
+    }
+    
+    // Get team ID from task metadata
+    private func getTeamId(from task: Task) -> String? {
+        guard let subtitle = task.subtitle else { return nil }
+        
+        // Extract team ID from metadata
+        if let teamIdRange = subtitle.range(of: "Team ID: ") {
+            let teamIdStart = teamIdRange.upperBound
+            if let endOfLine = subtitle[teamIdStart...].firstIndex(of: "\n") {
+                return String(subtitle[teamIdStart..<endOfLine])
+            }
+        }
+        
+        return nil
+    }
+    
+    // Fetch active team challenges for a team
+    func fetchActiveChallengesForTeam(_ teamId: String) -> [Task] {
+        do {
+            // We can't use predicate directly on our custom properties
+            // So we fetch all tasks and filter them
+            let descriptor = FetchDescriptor<Task>()
+            let allTasks = try modelContext.fetch(descriptor)
             
-            let descriptor = FetchDescriptor<Task>(predicate: predicate)
-            return try modelContext.fetch(descriptor)
+            return allTasks.filter { task in
+                guard let subtitle = task.subtitle,
+                      subtitle.contains("Team Challenge:"),
+                      subtitle.contains("Team ID: \(teamId)") else {
+                    return false
+                }
+                
+                return !isExpired(task: task) && !task.isCompleted
+            }
         } catch {
             print("Error fetching active team challenges: \(error)")
             return []

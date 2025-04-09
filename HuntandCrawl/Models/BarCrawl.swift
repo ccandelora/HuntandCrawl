@@ -19,6 +19,9 @@ final class BarCrawl {
     @Relationship(deleteRule: .noAction)
     var creator: User?
     
+    @Relationship(deleteRule: .nullify)
+    var teams: [Team]?
+    
     init(
         id: String = UUID().uuidString,
         name: String,

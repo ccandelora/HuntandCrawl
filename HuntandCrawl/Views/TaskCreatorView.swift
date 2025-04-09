@@ -3,6 +3,7 @@ import SwiftData
 import MapKit // For map selection
 import PhotosUI // For optional image upload
 import _Concurrency
+import CoreLocation
 
 // Define the TaskVerificationMethod enum
 enum TaskVerificationMethod: String, CaseIterable, Identifiable {
@@ -12,6 +13,22 @@ enum TaskVerificationMethod: String, CaseIterable, Identifiable {
     case manual = "manual"
     
     var id: String { self.rawValue }
+}
+
+// Define a helper class for photo loading
+fileprivate class TaskCreatorPhotoLoader {
+    func loadPhoto(from item: PhotosPickerItem, completion: @escaping (Data?) -> Void) {
+        item.loadTransferable(type: Data.self) { result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let data):
+                    completion(data)
+                case .failure:
+                    completion(nil)
+                }
+            }
+        }
+    }
 }
 
 struct TaskCreatorView: View {
@@ -124,9 +141,12 @@ struct TaskCreatorView: View {
                 LocationPicker(selectedCoordinate: $selectedLocation)
             }
             .onChange(of: selectedPhotoItem) { oldValue, newValue in
-                 Task {
-                     if let data = try? await newValue?.loadTransferable(type: Data.self) {
-                         taskImageData = data
+                 if let item = newValue {
+                     let loader = TaskCreatorPhotoLoader()
+                     loader.loadPhoto(from: item) { data in
+                         if let data = data {
+                             self.taskImageData = data
+                         }
                      }
                  }
              }
@@ -185,9 +205,6 @@ struct TaskCreatorView: View {
         }
     }
 }
-
-// Location Picker needs CoreLocation import if not already present
-import CoreLocation
 
 // Simple Location Picker View (Needs to be implemented or use an existing one)
 struct LocationPicker: View {

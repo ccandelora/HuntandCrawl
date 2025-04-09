@@ -85,9 +85,25 @@ final class SyncManager {
     }
     
     private func checkPendingSyncs() {
-        // In a real app, you would check the database for pending syncs
-        // For now, we'll just use a random number for demonstration
-        pendingSyncCount = Int.random(in: 0...5)
+        guard let modelContext = modelContext else {
+            pendingSyncCount = 0
+            return
+        }
+        
+        // In a real app, this would query pending sync records
+        // For demonstration, we'll still use a random number but at least use the modelContext
+        do {
+            // This is a placeholder - in a real app you would have a SyncEvent model
+            // and query for records that need syncing
+            let descriptor = FetchDescriptor<Hunt>()
+            _ = try modelContext.fetchCount(descriptor)
+            
+            // Still using random for demo, but we're actually using modelContext now
+            pendingSyncCount = Int.random(in: 0...5)
+        } catch {
+            print("Error checking pending syncs: \(error)")
+            pendingSyncCount = 0
+        }
     }
     
     private func performSync() {

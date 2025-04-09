@@ -3,6 +3,29 @@ import SwiftData
 import PhotosUI
 import _Concurrency
 
+// Alternative approach that doesn't rely on complex async patterns
+class PhotoLoader {
+    func loadPhoto(from item: PhotosPickerItem, completion: @escaping (Data?) -> Void) {
+        // Use a callback-based approach to avoid Task name conflicts
+        let processor = ProfilePhotoProcessor()
+        processor.process(item: item, completion: completion)
+    }
+}
+
+// Helper class to avoid Task name conflicts
+fileprivate class ProfilePhotoProcessor {
+    func process(item: PhotosPickerItem, completion: @escaping (Data?) -> Void) {
+        item.loadTransferable(type: Data.self) { result in
+            switch result {
+            case .success(let data):
+                completion(data)
+            case .failure:
+                completion(nil)
+            }
+        }
+    }
+}
+
 struct UserProfileView: View {
     @Environment(\.modelContext) private var modelContext
     
@@ -11,6 +34,7 @@ struct UserProfileView: View {
     @State private var showingEditSheet = false
     @State private var showingPhotosPicker = false
     @State private var selectedItem: PhotosPickerItem?
+    private let photoLoader = PhotoLoader()
     
     @Query(sort: \Hunt.createdAt, order: .reverse) var allHunts: [Hunt]
     @Query(sort: \Team.name) var allTeams: [Team]
@@ -219,8 +243,8 @@ struct UserProfileView: View {
     }
     
     private func loadTransferable(from item: PhotosPickerItem) {
-        Task {
-            if let data = try? await item.loadTransferable(type: Data.self) {
+        photoLoader.loadPhoto(from: item) { data in
+            if let data = data {
                 // In a real app, would update the user's profile image
             }
         }
