@@ -1,0 +1,58 @@
+{
+  "accessibility_info": [
+    {
+      "id": 1,
+      "bar_id": 1,
+      "wheelchair_accessible": true,
+      "seating_options": "Bar stools and tables with chairs",
+      "noise_level": "Moderate",
+      "lighting_level": "Dim, atmospheric",
+      "special_accommodations": "Staff can assist with menu reading, accessible entrance"
+    },
+    {
+      "id": 2,
+      "bar_id": 2,
+      "wheelchair_accessible": true,
+      "seating_options": "Bar stools, lounge chairs, tables",
+      "noise_level": "Loud during peak hours",
+      "lighting_level": "Bright during day, moderate at night",
+      "special_accommodations": "Wide pathways, accessible counter height"
+    },
+    {
+      "id": 3,
+      "bar_id": 4,
+      "wheelchair_accessible": true,
+      "seating_options": "Pool loungers, bar stools, tables",
+      "noise_level": "Very loud during pool parties",
+      "lighting_level": "Bright during day, colorful lighting at night",
+      "special_accommodations": "Elevator access to all levels, staff assistance available"
+    },
+    {
+      "id": 4,
+      "bar_id": 6,
+      "wheelchair_accessible": true,
+      "seating_options": "Bar stools, waterfront tables",
+      "noise_level": "Moderate",
+      "lighting_level": "Natural light during day, romantic lighting at night",
+      "special_accommodations": "Accessible outdoor seating area"
+    },
+    {
+      "id": 5,
+      "bar_id": 9,
+      "wheelchair_accessible": false,
+      "seating_options": "Ice benches, standing room",
+      "noise_level": "Quiet",
+      "lighting_level": "Dim with blue accent lighting",
+      "special_accommodations": "Staff assistance for mobility-impaired guests, alternative experience available"
+    },
+    {
+      "id": 6,
+      "bar_id": 10,
+      "wheelchair_accessible": true,
+      "seating_options": "Bar stools, booth seating, tables",
+      "noise_level": "Moderate to loud during sports events",
+      "lighting_level": "Moderate",
+      "special_accommodations": "Accessible tables, large print menus available"
+    }
+  ]
+}

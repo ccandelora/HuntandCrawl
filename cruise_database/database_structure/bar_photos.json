@@ -1,0 +1,76 @@
+{
+  "bar_photos": [
+    {
+      "id": 1,
+      "bar_id": 1,
+      "photo_url": "photos/alchemy_bar_interior.jpg",
+      "caption": "Elegant interior of the Alchemy Bar on Carnival Celebration",
+      "user_submitted": false,
+      "featured": true,
+      "date_taken": "2024-12-15"
+    },
+    {
+      "id": 2,
+      "bar_id": 1,
+      "photo_url": "photos/alchemy_bar_cocktail.jpg",
+      "caption": "Cucumber Sunrise signature cocktail being prepared",
+      "user_submitted": false,
+      "featured": true,
+      "date_taken": "2024-12-15"
+    },
+    {
+      "id": 3,
+      "bar_id": 2,
+      "photo_url": "photos/redfrog_rum_bar.jpg",
+      "caption": "RedFrog Rum Bar poolside location",
+      "user_submitted": false,
+      "featured": true,
+      "date_taken": "2024-11-20"
+    },
+    {
+      "id": 4,
+      "bar_id": 4,
+      "photo_url": "photos/lime_coconut_bar.jpg",
+      "caption": "The Lime & Coconut multi-level bar on Utopia of the Seas",
+      "user_submitted": false,
+      "featured": true,
+      "date_taken": "2025-01-05"
+    },
+    {
+      "id": 5,
+      "bar_id": 4,
+      "photo_url": "photos/lime_coconut_crowd.jpg",
+      "caption": "Sunset party at The Lime & Coconut",
+      "user_submitted": true,
+      "featured": false,
+      "date_taken": "2025-01-06"
+    },
+    {
+      "id": 6,
+      "bar_id": 6,
+      "photo_url": "photos/sugarcane_mojito_bar.jpg",
+      "caption": "Sugarcane Mojito Bar on Norwegian Prima's Waterfront",
+      "user_submitted": false,
+      "featured": true,
+      "date_taken": "2024-10-12"
+    },
+    {
+      "id": 7,
+      "bar_id": 9,
+      "photo_url": "photos/skyy_vodka_ice_bar.jpg",
+      "caption": "The frigid interior of Skyy Vodka Ice Bar",
+      "user_submitted": false,
+      "featured": true,
+      "date_taken": "2024-09-30"
+    },
+    {
+      "id": 8,
+      "bar_id": 10,
+      "photo_url": "photos/osheehans_bar.jpg",
+      "caption": "O'Sheehan's Neighbourhood Bar & Grill during a sports broadcast",
+      "user_submitted": true,
+      "featured": false,
+      "date_taken": "2025-02-18"
+    }
+  ]
+}

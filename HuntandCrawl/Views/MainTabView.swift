@@ -23,7 +23,80 @@ struct MainTabView: View {
     
     // MARK: - Body
     var body: some View {
+        mainTabView
+            .accentColor(AppColors.defaultPrimary)
+            .overlay {
+                syncMessageOverlay
+                
+                if selectedTab == 0 {
+                    createFloatingButton
+                }
+            }
+            .sheet(isPresented: $navigationManager.isSheetPresented) {
+                if let activeSheet = navigationManager.activeSheet {
+                    navigationManager.view(for: activeSheet)
+                }
+            }
+            .fullScreenCover(isPresented: $navigationManager.isFullscreenPresented) {
+                if let fullscreenDestination = navigationManager.fullscreenDestination {
+                    navigationManager.view(for: fullscreenDestination)
+                }
+            }
+            .confirmationDialog(
+                navigationManager.confirmationTitle,
+                isPresented: $navigationManager.isConfirmationDialogPresented,
+                actions: {
+                    ForEach(navigationManager.confirmationActions) { action in
+                        Button(role: action.role) {
+                            action.handler()
+                        } label: {
+                            Text(action.title)
+                        }
+                    }
+                },
+                message: {
+                    Text(navigationManager.confirmationMessage)
+                }
+            )
+            .alert(
+                navigationManager.alertTitle,
+                isPresented: $navigationManager.isAlertPresented,
+                actions: {
+                    ForEach(navigationManager.alertActions) { action in
+                        Button(role: action.role) {
+                            action.handler()
+                        } label: {
+                            Text(action.title)
+                        }
+                    }
+                },
+                message: {
+                    Text(navigationManager.alertMessage)
+                }
+            )
+            .onAppear {
+                initializeManagers()
+            }
+            .onChange(of: syncManager.syncStatus) { _, newValue in
+                handleSyncStatusChange(newValue)
+            }
+            .onChange(of: syncManager.pendingSyncCount) { _, newCount in
+                pendingSyncCount = newCount
+                if newCount > 0 {
+                    syncStatusMessage = "Pending syncs: \(newCount)"
+                }
+            }
+            .onChange(of: scenePhase) { _, newPhase in
+                handleScenePhaseChange(newPhase)
+            }
+            .environmentObject(navigationManager)
+            .environment(locationManager)
+            .environment(syncManager)
+    }
+    
+    private var mainTabView: some View {
         TabView(selection: $selectedTab) {
+            // Explore Tab
             NavigationStack(path: $navigationManager.path) {
                 ExploreView()
                     .navigationDestination(for: NavigationManager.Destination.self) { destination in
@@ -31,99 +104,128 @@ struct MainTabView: View {
                     }
             }
             .tabItem {
-                Label("Explore", systemImage: "map")
+                Label("Explore", systemImage: "map.fill")
             }
             .tag(0)
             
+            // Create Tab
             NavigationStack {
                 CreateView()
+                    .navigationDestination(for: NavigationManager.Destination.self) { destination in
+                        navigationManager.view(for: destination)
+                    }
             }
             .tabItem {
-                Label("Create", systemImage: "plus.circle")
+                Label("Create", systemImage: "plus.circle.fill")
             }
             .tag(1)
             
+            // Profile Tab
             NavigationStack {
                 ProfileView()
+                    .navigationDestination(for: NavigationManager.Destination.self) { destination in
+                        navigationManager.view(for: destination)
+                    }
             }
             .tabItem {
-                Label("Profile", systemImage: "person")
+                Label("Profile", systemImage: "person.fill")
             }
             .tag(2)
         }
-        .overlay {
+    }
+    
+    private var createFloatingButton: some View {
+        VStack {
+            Spacer()
+            HStack {
+                Spacer()
+                Button(action: {
+                    if showingSyncMessage {
+                        syncManager.trySync()
+                    } else {
+                        presentCreateOptions()
+                    }
+                }) {
+                    Image(systemName: showingSyncMessage ? "arrow.clockwise" : "plus")
+                        .font(.headline)
+                        .foregroundColor(.white)
+                        .frame(width: 56, height: 56)
+                        .background(AppColors.defaultPrimary)
+                        .cornerRadius(28)
+                        .shadow(radius: 3)
+                }
+                .padding(.trailing, 20)
+                .padding(.bottom, 16)
+            }
+        }
+    }
+    
+    private func presentCreateOptions() {
+        let createActions: [NavigationManager.ConfirmationAction] = [
+            NavigationManager.ConfirmationAction(
+                title: "Create Hunt",
+                role: nil,
+                handler: { self.navigationManager.presentSheet(.createHunt) }
+            ),
+            NavigationManager.ConfirmationAction(
+                title: "Create Bar Crawl",
+                role: nil,
+                handler: { self.navigationManager.presentSheet(.createBarCrawl) }
+            ),
+            NavigationManager.ConfirmationAction(
+                title: "Cancel",
+                role: .cancel,
+                handler: {}
+            )
+        ]
+        
+        navigationManager.presentConfirmation(
+            title: "Create",
+            message: "What would you like to create?",
+            actions: createActions
+        )
+    }
+    
+    // MARK: - Sync Message Overlay
+    private var syncMessageOverlay: some View {
+        VStack {
             if showingSyncMessage {
-                VStack {
-                    Text(syncStatusMessage)
-                        .padding()
-                        .background(.ultraThinMaterial)
-                        .cornerRadius(10)
-                        .padding()
-                    Spacer()
+                syncMessageBanner
+            }
+            
+            Spacer()
+        }
+    }
+    
+    private var syncMessageBanner: some View {
+        HStack {
+            Image(systemName: "arrow.triangle.2.circlepath")
+                .foregroundColor(AppColors.defaultPrimary)
+            
+            Text(syncStatusMessage)
+                .font(AppTextStyles.footnote)
+            
+            Spacer()
+            
+            Button(action: {
+                withAnimation {
+                    showingSyncMessage = false
                 }
-                .transition(.move(edge: .top))
+            }) {
+                Image(systemName: "xmark.circle.fill")
+                    .foregroundColor(.secondary)
             }
         }
-        .sheet(isPresented: $navigationManager.isSheetPresented) {
-            if let activeSheet = navigationManager.activeSheet {
-                navigationManager.view(for: activeSheet)
-            }
-        }
-        .fullScreenCover(isPresented: $navigationManager.isFullscreenPresented) {
-            if let fullscreenDestination = navigationManager.fullscreenDestination {
-                navigationManager.view(for: fullscreenDestination)
-            }
-        }
-        .confirmationDialog(
-            navigationManager.confirmationTitle,
-            isPresented: $navigationManager.isConfirmationDialogPresented,
-            actions: {
-                ForEach(navigationManager.confirmationActions) { action in
-                    Button(role: action.role) {
-                        action.handler()
-                    } label: {
-                        Text(action.title)
-                    }
-                }
-            },
-            message: {
-                Text(navigationManager.confirmationMessage)
-            }
+        .padding(12)
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color(.systemBackground))
+                .shadow(color: Color.black.opacity(0.1), radius: 5)
         )
-        .alert(
-            navigationManager.alertTitle,
-            isPresented: $navigationManager.isAlertPresented,
-            actions: {
-                ForEach(navigationManager.alertActions) { action in
-                    Button(role: action.role) {
-                        action.handler()
-                    } label: {
-                        Text(action.title)
-                    }
-                }
-            },
-            message: {
-                Text(navigationManager.alertMessage)
-            }
-        )
-        .onAppear {
-            initializeManagers()
-        }
-        .onChange(of: syncManager.syncStatus) { _, newValue in
-            handleSyncStatusChange(newValue)
-        }
-        .onChange(of: syncManager.pendingSyncCount) { _, newCount in
-            pendingSyncCount = newCount
-            if newCount > 0 {
-                syncStatusMessage = "Pending syncs: \(newCount)"
-            }
-        }
-        .onChange(of: scenePhase) { _, newPhase in
-            handleScenePhaseChange(newPhase)
-        }
-        .environmentObject(navigationManager)
-        .environment(locationManager)
-        .environment(syncManager)
+        .padding(.horizontal)
+        .padding(.top, 8)
+        .transition(.move(edge: .top).combined(with: .opacity))
+        .zIndex(1)
     }
     
     // MARK: - Methods
@@ -137,17 +239,21 @@ struct MainTabView: View {
         
         // Print debug info
         print("MainTabView: Managers initialized")
-        print("MainTabView: ModelContext available: \(modelContext != nil)")
+        print("MainTabView: ModelContext available")
     }
     
     private func handleSyncStatusChange(_ status: SyncManager.SyncStatus) {
         switch status {
         case .syncing:
             syncStatusMessage = "Syncing data..."
-            showingSyncMessage = true
+            withAnimation {
+                showingSyncMessage = true
+            }
         case .synced:
             syncStatusMessage = "Data synced successfully"
-            showingSyncMessage = true
+            withAnimation {
+                showingSyncMessage = true
+            }
             // Hide message after delay
             DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                 withAnimation {
@@ -159,7 +265,9 @@ struct MainTabView: View {
             showingSyncAlert = true
         case .offline:
             syncStatusMessage = "Working offline"
-            showingSyncMessage = true
+            withAnimation {
+                showingSyncMessage = true
+            }
             // Hide message after delay
             DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                 withAnimation {
@@ -167,7 +275,9 @@ struct MainTabView: View {
                 }
             }
         case .idle:
-            showingSyncMessage = false
+            withAnimation {
+                showingSyncMessage = false
+            }
         }
     }
     

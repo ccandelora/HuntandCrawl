@@ -1,0 +1,114 @@
+{
+  "bars": [
+    {
+      "id": 1,
+      "name": "Alchemy Bar",
+      "description": "For the perfect antidote to all that pre-vacation stress, try a unique cocktail custom-concocted by our mix-masters.",
+      "bar_type": "Cocktail Bar",
+      "signature_drinks": "Cucumber Sunrise, The Perfect Storm, Spicy Chipotle Pineapple Martini",
+      "atmosphere": "Upscale, Elegant",
+      "dress_code": "Casual",
+      "hours": "Evening to Late Night",
+      "cost_category": "Additional"
+    },
+    {
+      "id": 2,
+      "name": "RedFrog Rum Bar",
+      "description": "Get into the island vibe at this tropical hangout, serving your fave rum drinks and our own private-label draft beer.",
+      "bar_type": "Tropical Bar",
+      "signature_drinks": "Rum Runner, Bearded Clam, ThirstyFrog Red beer",
+      "atmosphere": "Casual, Tropical",
+      "dress_code": "Casual",
+      "hours": "Day to Evening",
+      "cost_category": "Additional"
+    },
+    {
+      "id": 3,
+      "name": "BlueIguana Tequila Bar",
+      "description": "Feel like a frozen tequila drink? How about an ice-cold Mexican beer? Grab a stool, amigo. This is where you wanna be.",
+      "bar_type": "Mexican-themed Bar",
+      "signature_drinks": "Frozen Margaritas, Mexican Beers, Tequila Flights",
+      "atmosphere": "Casual, Fun",
+      "dress_code": "Casual",
+      "hours": "Day to Evening",
+      "cost_category": "Additional"
+    },
+    {
+      "id": 4,
+      "name": "The Lime & Coconut",
+      "description": "The Lime and Coconut turns the vacay vibes way, way up with DJs, live music and pool bars serving all your favorite poolside cocktails.",
+      "bar_type": "Pool Bar",
+      "signature_drinks": "Lime & Coconut (lime juice, coconut syrup, guava syrup, coconut milk and Malibu coconut rum)",
+      "atmosphere": "Tropical, Energetic",
+      "dress_code": "Swimwear",
+      "hours": "Day to Evening",
+      "cost_category": "Additional"
+    },
+    {
+      "id": 5,
+      "name": "Schooner Bar",
+      "description": "A Royal Caribbean signature venue with a nautical theme and classic cocktails.",
+      "bar_type": "Piano Bar",
+      "signature_drinks": "Lavender Daiquiri, Old Fashioned",
+      "atmosphere": "Cozy, Sophisticated",
+      "dress_code": "Smart Casual",
+      "hours": "Evening to Late Night",
+      "cost_category": "Additional"
+    },
+    {
+      "id": 6,
+      "name": "Sugarcane Mojito Bar",
+      "description": "Offers a host of unique flavors, including raspberry guava, jalapeno cucumber, and spicy passion fruit.",
+      "bar_type": "Specialty Cocktail Bar",
+      "signature_drinks": "Pineapple Coconut Mojito, Raspberry Guava Mojito, Spicy Passion Fruit Mojito",
+      "atmosphere": "Tropical, Sophisticated",
+      "dress_code": "Casual",
+      "hours": "Afternoon to Late Night",
+      "cost_category": "Additional"
+    },
+    {
+      "id": 7,
+      "name": "Maltings Beer & Whiskey Bar",
+      "description": "Great place to catch up on the craft beer scene at sea with 50 bottled beers and 24 draft beers on tap.",
+      "bar_type": "Beer and Whiskey Bar",
+      "signature_drinks": "Craft Beer Flights, Whiskey Tastings",
+      "atmosphere": "Pub-like, Relaxed",
+      "dress_code": "Casual",
+      "hours": "Afternoon to Late Night",
+      "cost_category": "Additional"
+    },
+    {
+      "id": 8,
+      "name": "Vibe Beach Club",
+      "description": "Private retreat for guests ages 18 and older with cushioned chaise lounges, ocean views, and relaxing whirlpools.",
+      "bar_type": "Premium Pool Bar",
+      "signature_drinks": "Specialty Cocktails, Premium Spirits",
+      "atmosphere": "Exclusive, Relaxed",
+      "dress_code": "Swimwear",
+      "hours": "Day",
+      "cost_category": "Premium (Requires Pass Purchase)"
+    },
+    {
+      "id": 9,
+      "name": "Skyy Vodka Ice Bar",
+      "description": "Made entirely of ice, inspired by Scandinavian ice hotels. A brisk 17 degrees Fahrenheit inside.",
+      "bar_type": "Specialty Experience Bar",
+      "signature_drinks": "Vodka Cocktails",
+      "atmosphere": "Unique, Frigid",
+      "dress_code": "Casual (Parkas Provided)",
+      "hours": "Evening",
+      "cost_category": "Premium (Additional Fee)"
+    },
+    {
+      "id": 10,
+      "name": "O'Sheehan's Neighbourhood Bar & Grill",
+      "description": "Irish-style pub open around the clock with wide-ranging beer selection, food, pool tables, darts, and flat-screen TVs for sports.",
+      "bar_type": "Irish Pub",
+      "signature_drinks": "Guinness, Irish Whiskey",
+      "atmosphere": "Casual, Friendly",
+      "dress_code": "Casual",
+      "hours": "24 Hours",
+      "cost_category": "Included (Drinks Additional)"
+    }
+  ]
+}

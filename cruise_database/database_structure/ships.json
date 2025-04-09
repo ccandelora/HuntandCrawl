@@ -1,0 +1,166 @@
+{
+  "ships": [
+    {
+      "id": 1,
+      "cruise_line_id": 1,
+      "name": "Carnival Celebration",
+      "class": "Excel",
+      "year_built": 2022,
+      "passenger_capacity": 5374,
+      "number_of_bars": 15
+    },
+    {
+      "id": 2,
+      "cruise_line_id": 1,
+      "name": "Carnival Jubilee",
+      "class": "Excel",
+      "year_built": 2023,
+      "passenger_capacity": 5374,
+      "number_of_bars": 15
+    },
+    {
+      "id": 3,
+      "cruise_line_id": 1,
+      "name": "Mardi Gras",
+      "class": "Excel",
+      "year_built": 2021,
+      "passenger_capacity": 5282,
+      "number_of_bars": 15
+    },
+    {
+      "id": 4,
+      "cruise_line_id": 1,
+      "name": "Carnival Panorama",
+      "class": "Vista",
+      "year_built": 2019,
+      "passenger_capacity": 4008,
+      "number_of_bars": 12
+    },
+    {
+      "id": 5,
+      "cruise_line_id": 1,
+      "name": "Carnival Horizon",
+      "class": "Vista",
+      "year_built": 2018,
+      "passenger_capacity": 3960,
+      "number_of_bars": 12
+    },
+    {
+      "id": 6,
+      "cruise_line_id": 1,
+      "name": "Carnival Vista",
+      "class": "Vista",
+      "year_built": 2016,
+      "passenger_capacity": 3934,
+      "number_of_bars": 12
+    },
+    {
+      "id": 7,
+      "cruise_line_id": 1,
+      "name": "Carnival Venezia",
+      "class": "Vista",
+      "year_built": 2019,
+      "passenger_capacity": 4232,
+      "number_of_bars": 10
+    },
+    {
+      "id": 8,
+      "cruise_line_id": 1,
+      "name": "Carnival Firenze",
+      "class": "Vista",
+      "year_built": 2020,
+      "passenger_capacity": 4232,
+      "number_of_bars": 10
+    },
+    {
+      "id": 9,
+      "cruise_line_id": 2,
+      "name": "Utopia of the Seas",
+      "class": "Oasis",
+      "year_built": 2024,
+      "passenger_capacity": 5668,
+      "number_of_bars": 23
+    },
+    {
+      "id": 10,
+      "cruise_line_id": 2,
+      "name": "Wonder of the Seas",
+      "class": "Oasis",
+      "year_built": 2022,
+      "passenger_capacity": 5734,
+      "number_of_bars": 20
+    },
+    {
+      "id": 11,
+      "cruise_line_id": 2,
+      "name": "Symphony of the Seas",
+      "class": "Oasis",
+      "year_built": 2018,
+      "passenger_capacity": 5518,
+      "number_of_bars": 19
+    },
+    {
+      "id": 12,
+      "cruise_line_id": 2,
+      "name": "Icon of the Seas",
+      "class": "Icon",
+      "year_built": 2024,
+      "passenger_capacity": 5610,
+      "number_of_bars": 22
+    },
+    {
+      "id": 13,
+      "cruise_line_id": 2,
+      "name": "Odyssey of the Seas",
+      "class": "Quantum Ultra",
+      "year_built": 2021,
+      "passenger_capacity": 4198,
+      "number_of_bars": 16
+    },
+    {
+      "id": 14,
+      "cruise_line_id": 3,
+      "name": "Norwegian Prima",
+      "class": "Prima",
+      "year_built": 2022,
+      "passenger_capacity": 3215,
+      "number_of_bars": 14
+    },
+    {
+      "id": 15,
+      "cruise_line_id": 3,
+      "name": "Norwegian Viva",
+      "class": "Prima",
+      "year_built": 2023,
+      "passenger_capacity": 3219,
+      "number_of_bars": 14
+    },
+    {
+      "id": 16,
+      "cruise_line_id": 3,
+      "name": "Norwegian Encore",
+      "class": "Breakaway Plus",
+      "year_built": 2019,
+      "passenger_capacity": 3998,
+      "number_of_bars": 16
+    },
+    {
+      "id": 17,
+      "cruise_line_id": 3,
+      "name": "Norwegian Bliss",
+      "class": "Breakaway Plus",
+      "year_built": 2018,
+      "passenger_capacity": 4004,
+      "number_of_bars": 16
+    },
+    {
+      "id": 18,
+      "cruise_line_id": 3,
+      "name": "Norwegian Joy",
+      "class": "Breakaway Plus",
+      "year_built": 2017,
+      "passenger_capacity": 3804,
+      "number_of_bars": 15
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "drink_packages": [
+    {
+      "id": 1,
+      "cruise_line_id": 1,
+      "name": "Cheers! Beverage Program",
+      "description": "Carnival's all-inclusive alcoholic beverage package",
+      "price_range": "$59.95 - $64.95 per person per day plus 18% gratuity",
+      "included_bars": [1, 2, 3],
+      "included_drinks": ["Beer", "Wine", "Spirits", "Cocktails", "Soda", "Coffee", "Tea", "Bottled Water"],
+      "limitations": "15 alcoholic drinks per 24-hour period, must be 21+ to purchase, all adults in same cabin must purchase",
+      "value_rating": 4.2
+    },
+    {
+      "id": 2,
+      "cruise_line_id": 2,
+      "name": "Deluxe Beverage Package",
+      "description": "Royal Caribbean's premium all-inclusive drink package",
+      "price_range": "$63 - $89 per person per day plus 18% gratuity",
+      "included_bars": [4, 5],
+      "included_drinks": ["Beer", "Wine", "Spirits", "Cocktails", "Soda", "Coffee", "Tea", "Bottled Water", "Fresh Squeezed Juices"],
+      "limitations": "Drinks up to $13 value, all adults in same cabin must purchase",
+      "value_rating": 4.0
+    },
+    {
+      "id": 3,
+      "cruise_line_id": 3,
+      "name": "Premium Plus Beverage Package",
+      "description": "Norwegian's top-tier unlimited beverage package with premium brands",
+      "price_range": "$98 - $128 per person per day plus 20% gratuity",
+      "included_bars": [6, 7, 8, 9, 10],
+      "included_drinks": ["Premium Beer", "Fine Wine", "Top-Shelf Spirits", "Specialty Cocktails", "Champagne", "Soda", "Energy Drinks", "Specialty Coffee", "Bottled Water"],
+      "limitations": "No daily limit, includes drinks at private islands",
+      "value_rating": 4.5
+    }
+  ]
+}

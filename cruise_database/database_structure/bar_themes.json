@@ -1,0 +1,74 @@
+{
+  "bar_themes": [
+    {
+      "id": 1,
+      "bar_id": 1,
+      "theme_name": "Pharmacy/Apothecary",
+      "description": "Styled like an old-world apothecary with mixologists in lab coats creating 'prescriptions' for guests",
+      "atmosphere": "Sophisticated, Intimate",
+      "music_type": "Soft Jazz, Lounge Music",
+      "typical_crowd": "Couples, Adults seeking craft cocktails",
+      "dress_recommendations": "Smart Casual"
+    },
+    {
+      "id": 2,
+      "bar_id": 2,
+      "theme_name": "Caribbean Beach Bar",
+      "description": "Vibrant tropical setting reminiscent of a beachside rum shack",
+      "atmosphere": "Lively, Casual",
+      "music_type": "Reggae, Calypso, Island Rhythms",
+      "typical_crowd": "Fun-loving cruisers of all ages",
+      "dress_recommendations": "Casual, Beachwear"
+    },
+    {
+      "id": 3,
+      "bar_id": 3,
+      "theme_name": "Mexican Cantina",
+      "description": "Colorful Mexican-inspired decor with tequila as the star",
+      "atmosphere": "Festive, Energetic",
+      "music_type": "Latin, Mexican Pop",
+      "typical_crowd": "Groups, Tequila enthusiasts",
+      "dress_recommendations": "Casual"
+    },
+    {
+      "id": 4,
+      "bar_id": 4,
+      "theme_name": "Modern Tropical",
+      "description": "Contemporary take on a Caribbean beach bar with multi-level seating",
+      "atmosphere": "Energetic, Social",
+      "music_type": "Contemporary, DJ Sets, Live Music",
+      "typical_crowd": "Pool-goers, Sun-seekers",
+      "dress_recommendations": "Swimwear, Casual"
+    },
+    {
+      "id": 5,
+      "bar_id": 5,
+      "theme_name": "Nautical Piano Bar",
+      "description": "Classic maritime theme with nautical artifacts and piano entertainment",
+      "atmosphere": "Sophisticated, Nostalgic",
+      "music_type": "Piano Classics, Sing-alongs",
+      "typical_crowd": "Older adults, Music lovers",
+      "dress_recommendations": "Smart Casual"
+    },
+    {
+      "id": 6,
+      "bar_id": 9,
+      "theme_name": "Arctic Ice Cave",
+      "description": "Everything made of ice in a frigid, blue-lit environment",
+      "atmosphere": "Unique, Adventurous",
+      "music_type": "Ambient Electronic",
+      "typical_crowd": "Experience-seekers, Photo enthusiasts",
+      "dress_recommendations": "Casual (Parkas Provided)"
+    },
+    {
+      "id": 7,
+      "bar_id": 10,
+      "theme_name": "Traditional Irish Pub",
+      "description": "Authentic Irish pub atmosphere with dark woods and traditional decor",
+      "atmosphere": "Welcoming, Casual",
+      "music_type": "Irish Folk, Sports Broadcasts",
+      "typical_crowd": "Sports fans, Beer enthusiasts, Late-night crowd",
+      "dress_recommendations": "Casual"
+    }
+  ]
+}

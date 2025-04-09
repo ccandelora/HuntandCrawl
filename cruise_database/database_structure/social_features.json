@@ -1,0 +1,64 @@
+{
+  "social_features": [
+    {
+      "id": 1,
+      "bar_id": 1,
+      "meetup_friendly": true,
+      "singles_friendly": true,
+      "group_friendly": true,
+      "family_friendly": false,
+      "typical_age_range": "25-65",
+      "social_events": ["Mixology Competitions", "Tasting Events"]
+    },
+    {
+      "id": 2,
+      "bar_id": 2,
+      "meetup_friendly": true,
+      "singles_friendly": true,
+      "group_friendly": true,
+      "family_friendly": true,
+      "typical_age_range": "21-60",
+      "social_events": ["Caribbean Dance Parties", "Live Music"]
+    },
+    {
+      "id": 3,
+      "bar_id": 4,
+      "meetup_friendly": true,
+      "singles_friendly": true,
+      "group_friendly": true,
+      "family_friendly": true,
+      "typical_age_range": "18-50",
+      "social_events": ["Pool Parties", "DJ Sessions", "Dance Contests"]
+    },
+    {
+      "id": 4,
+      "bar_id": 5,
+      "meetup_friendly": true,
+      "singles_friendly": true,
+      "group_friendly": true,
+      "family_friendly": false,
+      "typical_age_range": "30-70",
+      "social_events": ["Piano Sing-alongs", "Trivia Nights"]
+    },
+    {
+      "id": 5,
+      "bar_id": 6,
+      "meetup_friendly": true,
+      "singles_friendly": true,
+      "group_friendly": true,
+      "family_friendly": false,
+      "typical_age_range": "25-60",
+      "social_events": ["Sunset Gatherings", "Mojito Making Classes"]
+    },
+    {
+      "id": 6,
+      "bar_id": 10,
+      "meetup_friendly": true,
+      "singles_friendly": true,
+      "group_friendly": true,
+      "family_friendly": true,
+      "typical_age_range": "21-75",
+      "social_events": ["Sports Viewing Parties", "Pub Quizzes", "Dart Tournaments"]
+    }
+  ]
+}

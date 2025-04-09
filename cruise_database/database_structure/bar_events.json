@@ -1,0 +1,64 @@
+{
+  "bar_events": [
+    {
+      "id": 1,
+      "bar_id": 1,
+      "ship_id": 1,
+      "event_name": "Mixology Class",
+      "description": "Learn to craft premium cocktails with our expert mixologists",
+      "start_time": "14:00",
+      "end_time": "15:30",
+      "recurring": true,
+      "recurring_pattern": "Sea days only",
+      "special_pricing": "$25 per person, includes 3 cocktails"
+    },
+    {
+      "id": 2,
+      "bar_id": 2,
+      "ship_id": 1,
+      "event_name": "Caribbean Rum Tasting",
+      "description": "Sample premium rums from around the Caribbean",
+      "start_time": "16:00",
+      "end_time": "17:30",
+      "recurring": true,
+      "recurring_pattern": "Tuesdays and Fridays",
+      "special_pricing": "$30 per person, includes 5 rum samples"
+    },
+    {
+      "id": 3,
+      "bar_id": 5,
+      "ship_id": 9,
+      "event_name": "Piano Battle",
+      "description": "Two pianists go head-to-head taking song requests from the audience",
+      "start_time": "21:00",
+      "end_time": "23:00",
+      "recurring": true,
+      "recurring_pattern": "Every evening",
+      "special_pricing": "No cover charge, drink specials available"
+    },
+    {
+      "id": 4,
+      "bar_id": 6,
+      "ship_id": 14,
+      "event_name": "Mojito Madness",
+      "description": "Half-price mojitos and live Latin music",
+      "start_time": "16:00",
+      "end_time": "18:00",
+      "recurring": true,
+      "recurring_pattern": "Daily",
+      "special_pricing": "50% off all mojitos"
+    },
+    {
+      "id": 5,
+      "bar_id": 9,
+      "ship_id": 16,
+      "event_name": "Ice Bar Experience",
+      "description": "Special guided tasting of premium vodkas in the ice bar",
+      "start_time": "19:00",
+      "end_time": "20:00",
+      "recurring": true,
+      "recurring_pattern": "Wednesdays and Saturdays",
+      "special_pricing": "$35 per person, includes entry and 4 premium vodka samples"
+    }
+  ]
+}

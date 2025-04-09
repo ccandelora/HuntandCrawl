@@ -1,0 +1,52 @@
+{
+  "user_achievements": [
+    {
+      "id": 1,
+      "user_id": "user123",
+      "achievement_id": 1,
+      "date_earned": "2025-03-18",
+      "ships_completed": [1],
+      "bars_visited": [1, 2, 3, 4, 5]
+    },
+    {
+      "id": 2,
+      "user_id": "user123",
+      "achievement_id": 3,
+      "date_earned": "2025-03-19",
+      "ships_completed": [1],
+      "bars_visited": [1, 2, 3]
+    },
+    {
+      "id": 3,
+      "user_id": "cruiser456",
+      "achievement_id": 1,
+      "date_earned": "2025-02-25",
+      "ships_completed": [9],
+      "bars_visited": [4, 5, 6, 7, 8]
+    },
+    {
+      "id": 4,
+      "user_id": "cruiser456",
+      "achievement_id": 2,
+      "date_earned": "2025-02-27",
+      "ships_completed": [9],
+      "bars_visited": [4, 5, 6, 7, 8]
+    },
+    {
+      "id": 5,
+      "user_id": "sailaway789",
+      "achievement_id": 1,
+      "date_earned": "2025-01-12",
+      "ships_completed": [14],
+      "bars_visited": [6, 7, 8, 9, 10]
+    },
+    {
+      "id": 6,
+      "user_id": "sailaway789",
+      "achievement_id": 6,
+      "date_earned": "2025-01-15",
+      "ships_completed": [14],
+      "bars_visited": [6, 7, 8, 9, 10]
+    }
+  ]
+}

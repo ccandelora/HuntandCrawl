@@ -1,0 +1,130 @@
+{
+  "ship_bars": [
+    {
+      "id": 1,
+      "ship_id": 1,
+      "bar_id": 1,
+      "location_on_ship": "Deck 6, Promenade",
+      "special_notes": "Popular evening spot, often has a wait during peak hours"
+    },
+    {
+      "id": 2,
+      "ship_id": 1,
+      "bar_id": 2,
+      "location_on_ship": "Deck 10, Pool Area",
+      "special_notes": "Great views of the pool deck"
+    },
+    {
+      "id": 3,
+      "ship_id": 1,
+      "bar_id": 3,
+      "location_on_ship": "Deck 10, Pool Area",
+      "special_notes": "Located opposite the RedFrog Rum Bar"
+    },
+    {
+      "id": 4,
+      "ship_id": 2,
+      "bar_id": 1,
+      "location_on_ship": "Deck 6, Promenade",
+      "special_notes": "Mixology demonstrations held weekly"
+    },
+    {
+      "id": 5,
+      "ship_id": 2,
+      "bar_id": 2,
+      "location_on_ship": "Deck 10, Pool Area",
+      "special_notes": "Live Caribbean music in the afternoons"
+    },
+    {
+      "id": 6,
+      "ship_id": 3,
+      "bar_id": 1,
+      "location_on_ship": "Deck 5, Promenade",
+      "special_notes": "Signature cocktail classes available for booking"
+    },
+    {
+      "id": 7,
+      "ship_id": 9,
+      "bar_id": 4,
+      "location_on_ship": "Decks 15 & 16, Pool Zone",
+      "special_notes": "Three separate locations throughout the pool area"
+    },
+    {
+      "id": 8,
+      "ship_id": 9,
+      "bar_id": 5,
+      "location_on_ship": "Deck 6, Royal Promenade",
+      "special_notes": "Live piano music nightly"
+    },
+    {
+      "id": 9,
+      "ship_id": 10,
+      "bar_id": 4,
+      "location_on_ship": "Deck 15, Pool Deck",
+      "special_notes": "DJ performances in the evening"
+    },
+    {
+      "id": 10,
+      "ship_id": 10,
+      "bar_id": 5,
+      "location_on_ship": "Deck 6, Royal Promenade",
+      "special_notes": "Trivia contests held regularly"
+    },
+    {
+      "id": 11,
+      "ship_id": 14,
+      "bar_id": 6,
+      "location_on_ship": "Deck 8, Waterfront",
+      "special_notes": "Indoor and outdoor seating available"
+    },
+    {
+      "id": 12,
+      "ship_id": 14,
+      "bar_id": 7,
+      "location_on_ship": "Deck 8, Waterfront",
+      "special_notes": "Beer tastings available for an additional fee"
+    },
+    {
+      "id": 13,
+      "ship_id": 14,
+      "bar_id": 8,
+      "location_on_ship": "Deck 17, Sun Deck",
+      "special_notes": "Limited passes sold daily, arrive early to secure access"
+    },
+    {
+      "id": 14,
+      "ship_id": 15,
+      "bar_id": 6,
+      "location_on_ship": "Deck 8, Waterfront",
+      "special_notes": "Mojito making classes offered on sea days"
+    },
+    {
+      "id": 15,
+      "ship_id": 16,
+      "bar_id": 9,
+      "location_on_ship": "Deck 8, near Casino",
+      "special_notes": "Entry fee includes three vodka-based drinks"
+    },
+    {
+      "id": 16,
+      "ship_id": 17,
+      "bar_id": 10,
+      "location_on_ship": "Deck 6, Atrium",
+      "special_notes": "24-hour food and drink service"
+    },
+    {
+      "id": 17,
+      "ship_id": 17,
+      "bar_id": 6,
+      "location_on_ship": "Deck 8, Waterfront",
+      "special_notes": "Best sunset views on the ship"
+    },
+    {
+      "id": 18,
+      "ship_id": 18,
+      "bar_id": 7,
+      "location_on_ship": "Deck 7, Waterfront",
+      "special_notes": "Over 70 different whiskeys available"
+    }
+  ]
+}

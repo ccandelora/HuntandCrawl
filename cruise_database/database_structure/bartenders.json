@@ -1,0 +1,49 @@
+{
+  "bartenders": [
+    {
+      "id": 1,
+      "name": "Miguel Rodriguez",
+      "bar_id": 1,
+      "ship_id": 1,
+      "specialty_drinks": ["Cucumber Sunrise", "The Perfect Storm"],
+      "bio": "With over 15 years of mixology experience, Miguel creates unforgettable cocktail experiences at the Alchemy Bar.",
+      "schedule": "Evening shifts, 5:00 PM - 1:00 AM"
+    },
+    {
+      "id": 2,
+      "name": "Sarah Johnson",
+      "bar_id": 2,
+      "ship_id": 1,
+      "specialty_drinks": ["Rum Runner", "Caribbean Sunset"],
+      "bio": "Sarah's passion for rum and tropical flavors makes her the perfect bartender for RedFrog Rum Bar.",
+      "schedule": "Day and evening shifts, rotating schedule"
+    },
+    {
+      "id": 3,
+      "name": "James Wilson",
+      "bar_id": 4,
+      "ship_id": 9,
+      "specialty_drinks": ["Lime & Coconut Signature", "Frozen Daiquiris"],
+      "bio": "James brings the party to The Lime & Coconut with his energetic personality and perfectly crafted cocktails.",
+      "schedule": "Pool deck hours, 10:00 AM - 6:00 PM"
+    },
+    {
+      "id": 4,
+      "name": "Elena Petrova",
+      "bar_id": 6,
+      "ship_id": 14,
+      "specialty_drinks": ["Pineapple Coconut Mojito", "Raspberry Guava Mojito"],
+      "bio": "Elena is known for her creative mojito variations and friendly service at Sugarcane Mojito Bar.",
+      "schedule": "Afternoon and evening shifts, 2:00 PM - 10:00 PM"
+    },
+    {
+      "id": 5,
+      "name": "Patrick O'Malley",
+      "bar_id": 10,
+      "ship_id": 17,
+      "specialty_drinks": ["Irish Coffee", "Perfect Guinness Pour"],
+      "bio": "Patrick brings authentic Irish hospitality to O'Sheehan's with his perfect pours and entertaining stories.",
+      "schedule": "Various shifts, 24-hour venue"
+    }
+  ]
+}

@@ -1,0 +1,100 @@
+{
+  "bar_drinks": [
+    {
+      "id": 1,
+      "bar_id": 1,
+      "name": "Cucumber Sunrise",
+      "description": "A refreshing blend of cucumber, lime, and vodka with a splash of cranberry",
+      "price_range": "$12-15",
+      "ingredients": "Vodka, cucumber, lime juice, simple syrup, cranberry juice"
+    },
+    {
+      "id": 2,
+      "bar_id": 1,
+      "name": "The Perfect Storm",
+      "description": "A bold mix of dark rum, ginger beer, and lime",
+      "price_range": "$12-15",
+      "ingredients": "Dark rum, ginger beer, lime juice, angostura bitters"
+    },
+    {
+      "id": 3,
+      "bar_id": 1,
+      "name": "Spicy Chipotle Pineapple Martini",
+      "description": "Sweet and spicy combination with a smoky finish",
+      "price_range": "$13-16",
+      "ingredients": "Vodka, pineapple juice, chipotle syrup, lime juice"
+    },
+    {
+      "id": 4,
+      "bar_id": 2,
+      "name": "Rum Runner",
+      "description": "Classic tropical cocktail with multiple rums and fruit juices",
+      "price_range": "$10-13",
+      "ingredients": "Light rum, dark rum, banana liqueur, blackberry liqueur, orange juice, pineapple juice, grenadine"
+    },
+    {
+      "id": 5,
+      "bar_id": 2,
+      "name": "ThirstyFrog Red",
+      "description": "Carnival's private label draft beer",
+      "price_range": "$8-10",
+      "ingredients": "Proprietary craft beer recipe"
+    },
+    {
+      "id": 6,
+      "bar_id": 3,
+      "name": "Blue's Patron Margarita",
+      "description": "Premium frozen margarita made with top-shelf tequila",
+      "price_range": "$12-15",
+      "ingredients": "Patron Silver tequila, blue curacao, lime juice, agave nectar"
+    },
+    {
+      "id": 7,
+      "bar_id": 4,
+      "name": "Lime & Coconut Signature",
+      "description": "The bar's namesake tropical cocktail",
+      "price_range": "$13-16",
+      "ingredients": "Lime juice, coconut syrup, guava syrup, coconut milk, Malibu coconut rum"
+    },
+    {
+      "id": 8,
+      "bar_id": 5,
+      "name": "Lavender Daiquiri",
+      "description": "A floral twist on the classic daiquiri",
+      "price_range": "$12-15",
+      "ingredients": "White rum, lavender syrup, lime juice, simple syrup"
+    },
+    {
+      "id": 9,
+      "bar_id": 6,
+      "name": "Pineapple Coconut Mojito",
+      "description": "Tropical variation of the classic mojito",
+      "price_range": "$13-16",
+      "ingredients": "White rum, pineapple, coconut cream, mint leaves, lime, soda water"
+    },
+    {
+      "id": 10,
+      "bar_id": 7,
+      "name": "Whiskey Flight",
+      "description": "Tasting selection of premium whiskeys",
+      "price_range": "$18-25",
+      "ingredients": "Selection of four premium whiskeys"
+    },
+    {
+      "id": 11,
+      "bar_id": 9,
+      "name": "Nordic Chill",
+      "description": "Signature vodka cocktail served in a glass made of ice",
+      "price_range": "$15-20 (included with entry fee)",
+      "ingredients": "Skyy vodka, peach schnapps, blue curacao, pineapple juice"
+    },
+    {
+      "id": 12,
+      "bar_id": 10,
+      "name": "Irish Coffee",
+      "description": "Classic hot cocktail perfect for sea days",
+      "price_range": "$9-12",
+      "ingredients": "Irish whiskey, coffee, brown sugar, whipped cream"
+    }
+  ]
+}

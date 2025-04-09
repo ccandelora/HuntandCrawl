@@ -1,0 +1,54 @@
+{
+  "happy_hours": [
+    {
+      "id": 1,
+      "bar_id": 2,
+      "ship_id": 1,
+      "start_time": "16:00",
+      "end_time": "18:00",
+      "days_available": "All cruise days",
+      "special_pricing": "Buy one, get one free on all rum drinks",
+      "featured_drinks": ["Rum Runner", "Bahama Mama", "ThirstyFrog Red beer"]
+    },
+    {
+      "id": 2,
+      "bar_id": 3,
+      "ship_id": 1,
+      "start_time": "15:00",
+      "end_time": "17:00",
+      "days_available": "All cruise days",
+      "special_pricing": "$2 off all tequila drinks, $1 off Mexican beers",
+      "featured_drinks": ["Blue's Patron Margarita", "Tequila Sunrise", "Corona"]
+    },
+    {
+      "id": 3,
+      "bar_id": 4,
+      "ship_id": 9,
+      "start_time": "16:00",
+      "end_time": "18:00",
+      "days_available": "Sea days only",
+      "special_pricing": "25% off signature cocktails",
+      "featured_drinks": ["Lime & Coconut Signature", "Miami Vice", "Bahama Mama"]
+    },
+    {
+      "id": 4,
+      "bar_id": 6,
+      "ship_id": 14,
+      "start_time": "17:00",
+      "end_time": "19:00",
+      "days_available": "All cruise days",
+      "special_pricing": "Half-price mojitos",
+      "featured_drinks": ["Pineapple Coconut Mojito", "Classic Mojito", "Raspberry Guava Mojito"]
+    },
+    {
+      "id": 5,
+      "bar_id": 10,
+      "ship_id": 17,
+      "start_time": "16:00",
+      "end_time": "19:00",
+      "days_available": "All cruise days",
+      "special_pricing": "$5 draft beers, $6 well drinks",
+      "featured_drinks": ["Guinness", "Irish Coffee", "Jameson Whiskey"]
+    }
+  ]
+}

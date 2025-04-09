@@ -1,0 +1,58 @@
+{
+  "achievements": [
+    {
+      "id": 1,
+      "name": "Bar Crawler Novice",
+      "description": "Visit 5 different bars on any cruise ship",
+      "requirements": "Check in at 5 unique bars",
+      "badge_image_url": "badges/bar_crawler_novice.png",
+      "points_value": 100,
+      "difficulty_level": "Easy"
+    },
+    {
+      "id": 2,
+      "name": "Mixology Master",
+      "description": "Try 10 different signature cocktails across any bars",
+      "requirements": "Log 10 unique signature cocktails",
+      "badge_image_url": "badges/mixology_master.png",
+      "points_value": 200,
+      "difficulty_level": "Moderate"
+    },
+    {
+      "id": 3,
+      "name": "Happy Hour Hero",
+      "description": "Attend 3 different happy hours on your cruise",
+      "requirements": "Check in during happy hour at 3 different bars",
+      "badge_image_url": "badges/happy_hour_hero.png",
+      "points_value": 150,
+      "difficulty_level": "Easy"
+    },
+    {
+      "id": 4,
+      "name": "Fleet Explorer",
+      "description": "Visit the same bar (by name) on 3 different ships",
+      "requirements": "Check in at the same bar concept on 3 different ships",
+      "badge_image_url": "badges/fleet_explorer.png",
+      "points_value": 300,
+      "difficulty_level": "Hard"
+    },
+    {
+      "id": 5,
+      "name": "Crawl Champion",
+      "description": "Complete 3 different official bar crawl routes",
+      "requirements": "Complete all stops on 3 different bar crawl routes",
+      "badge_image_url": "badges/crawl_champion.png",
+      "points_value": 500,
+      "difficulty_level": "Challenging"
+    },
+    {
+      "id": 6,
+      "name": "Social Butterfly",
+      "description": "Attend 5 different bar social events",
+      "requirements": "Check in at 5 different bar events",
+      "badge_image_url": "badges/social_butterfly.png",
+      "points_value": 250,
+      "difficulty_level": "Moderate"
+    }
+  ]
+}

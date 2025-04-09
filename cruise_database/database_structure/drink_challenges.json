@@ -1,0 +1,54 @@
+{
+  "drink_challenges": [
+    {
+      "id": 1,
+      "name": "Around the World Beer Challenge",
+      "description": "Sample beers from 8 different countries during your cruise",
+      "drinks_required": ["German Hefeweizen", "Belgian Tripel", "Irish Stout", "American IPA", "Mexican Lager", "Japanese Rice Lager", "British Ale", "Czech Pilsner"],
+      "time_limit": "Duration of cruise",
+      "reward_description": "Commemorative beer glass and certificate",
+      "difficulty_level": "Moderate",
+      "participating_ships": [1, 2, 3, 9, 10, 14, 15]
+    },
+    {
+      "id": 2,
+      "name": "Mojito Marathon",
+      "description": "Try all 6 specialty mojitos at Sugarcane Mojito Bar",
+      "drinks_required": ["Classic Mojito", "Pineapple Coconut Mojito", "Raspberry Guava Mojito", "Spicy Passion Fruit Mojito", "Mango Mojito", "Watermelon Mojito"],
+      "time_limit": "Duration of cruise",
+      "reward_description": "Complimentary signature mojito and recipe card",
+      "difficulty_level": "Moderate",
+      "participating_ships": [14, 15, 16, 17, 18]
+    },
+    {
+      "id": 3,
+      "name": "Ultimate Cocktail Quest",
+      "description": "Sample the signature cocktail at 10 different bars across the ship",
+      "drinks_required": ["Signature cocktails from any 10 bars"],
+      "time_limit": "Duration of cruise",
+      "reward_description": "Mixology class voucher and cocktail shaker",
+      "difficulty_level": "Challenging",
+      "participating_ships": [1, 2, 3, 9, 10, 11, 12, 14, 15, 16, 17]
+    },
+    {
+      "id": 4,
+      "name": "Tequila Tasting Tour",
+      "description": "Sample 5 different premium tequilas at BlueIguana Tequila Bar",
+      "drinks_required": ["Silver Tequila", "Reposado Tequila", "Añejo Tequila", "Extra Añejo Tequila", "Mezcal"],
+      "time_limit": "Single session",
+      "reward_description": "Tequila tasting certificate and souvenir shot glass",
+      "difficulty_level": "Easy",
+      "participating_ships": [1, 2, 3, 4, 5, 6, 7, 8]
+    },
+    {
+      "id": 5,
+      "name": "Whiskey World Tour",
+      "description": "Sample whiskeys from Scotland, Ireland, USA, Canada, and Japan",
+      "drinks_required": ["Scotch Whisky", "Irish Whiskey", "Bourbon", "Canadian Whisky", "Japanese Whisky"],
+      "time_limit": "Duration of cruise",
+      "reward_description": "Whiskey flight voucher and tasting notes journal",
+      "difficulty_level": "Moderate",
+      "participating_ships": [9, 10, 11, 12, 13, 14, 15, 16, 17, 18]
+    }
+  ]
+}

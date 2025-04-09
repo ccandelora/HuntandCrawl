@@ -1,0 +1,22 @@
+{
+  "cruise_lines": [
+    {
+      "id": 1,
+      "name": "Carnival Cruise Line",
+      "description": "Carnival Cruise Line is a leader in contemporary cruising and operates a fleet of ships designed to provide fun, memorable vacations at an outstanding value.",
+      "website": "https://www.carnival.com"
+    },
+    {
+      "id": 2,
+      "name": "Royal Caribbean",
+      "description": "Royal Caribbean International is known for driving innovation at sea and has continuously redefined cruise vacations since its launch in 1969.",
+      "website": "https://www.royalcaribbean.com"
+    },
+    {
+      "id": 3,
+      "name": "Norwegian Cruise Line",
+      "description": "Norwegian Cruise Line is the innovator in cruise travel with a 50-year history of breaking the boundaries of traditional cruising.",
+      "website": "https://www.ncl.com"
+    }
+  ]
+}
