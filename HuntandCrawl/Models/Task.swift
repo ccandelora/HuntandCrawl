@@ -12,16 +12,18 @@ enum VerificationMethod: String, Codable {
 }
 
 @Model
-final class Task {
+final class HuntTask {
     var id: String
     var title: String
     var subtitle: String?
     var taskDescription: String?
     var points: Int
     var verificationMethod: String
-    var latitude: Double?
-    var longitude: Double?
-    var radius: Double?
+    // Replace GPS coordinates with ship-specific location
+    var deckNumber: Int?
+    var locationOnShip: String?
+    var section: String? // Forward, Midship, Aft
+    var proximityRange: Int? // In meters/feet for proximity verification
     var question: String?
     var answer: String?
     var order: Int
@@ -41,9 +43,10 @@ final class Task {
         taskDescription: String? = nil,
         points: Int = 10,
         verificationMethod: VerificationMethod = .manual,
-        latitude: Double? = nil,
-        longitude: Double? = nil,
-        radius: Double? = nil,
+        deckNumber: Int? = nil,
+        locationOnShip: String? = nil,
+        section: String? = nil,
+        proximityRange: Int? = nil,
         question: String? = nil,
         answer: String? = nil,
         order: Int = 0
@@ -54,9 +57,10 @@ final class Task {
         self.taskDescription = taskDescription
         self.points = points
         self.verificationMethod = verificationMethod.rawValue
-        self.latitude = latitude
-        self.longitude = longitude
-        self.radius = radius
+        self.deckNumber = deckNumber
+        self.locationOnShip = locationOnShip
+        self.section = section
+        self.proximityRange = proximityRange
         self.question = question
         self.answer = answer
         self.order = order
@@ -64,14 +68,34 @@ final class Task {
     }
     
     var hasLocation: Bool {
-        return latitude != nil && longitude != nil
+        return deckNumber != nil && locationOnShip != nil
     }
     
-    var coordinate: CLLocationCoordinate2D? {
-        guard let latitude = latitude, let longitude = longitude else {
-            return nil
+    var locationDescription: String {
+        var description = ""
+        
+        if let deck = deckNumber {
+            description += "Deck \(deck)"
         }
-        return CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+        
+        if let location = locationOnShip {
+            if !description.isEmpty {
+                description += ", "
+            }
+            description += location
+        }
+        
+        if let section = section {
+            if !description.isEmpty && section.count > 0 {
+                description += " ("
+                description += section
+                description += ")"
+            } else if section.count > 0 {
+                description += section
+            }
+        }
+        
+        return description.isEmpty ? "Location unknown" : description
     }
     
     var isCompleted: Bool {

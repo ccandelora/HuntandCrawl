@@ -1,6 +1,26 @@
 import Foundation
 import SwiftData
 
+// Custom schema version struct to replace the missing SchemaVersion
+struct CustomSchemaVersion: Hashable {
+    let major: Int
+    let minor: Int
+    let patch: Int
+    
+    init(_ major: Int, _ minor: Int, _ patch: Int) {
+        self.major = major
+        self.minor = minor
+        self.patch = patch
+    }
+}
+
+// Define a schema and migration for Team
+extension Schema {
+    static var teamMigration: Schema {
+        Schema([Team.self])
+    }
+}
+
 @Model
 final class Team {
     var id: String
@@ -9,7 +29,20 @@ final class Team {
     var huntId: String?
     var barCrawlId: String?
     var score: Int
-    var memberIds: [String]
+    
+    // Store as a string instead of an array
+    var _memberIdsString: String = ""
+    
+    @Transient
+    var memberIds: [String] {
+        get {
+            return _memberIdsString.isEmpty ? [] : _memberIdsString.components(separatedBy: ",")
+        }
+        set {
+            _memberIdsString = newValue.joined(separator: ",")
+        }
+    }
+    
     var createdAt: Date
     var updatedAt: Date
     
@@ -54,13 +87,15 @@ final class Team {
         self.huntId = huntId
         self.barCrawlId = barCrawlId
         self.score = score
-        self.memberIds = memberIds
         self.createdAt = createdAt
         self.updatedAt = updatedAt
         self.isPrivate = isPrivate
         self.teamDescription = teamDescription
         self.teamImageData = teamImageData
         self.captainId = captainId
+        
+        // Initialize the backing property directly after all stored properties are initialized
+        self._memberIdsString = memberIds.joined(separator: ",")
     }
     
     convenience init(name: String) {

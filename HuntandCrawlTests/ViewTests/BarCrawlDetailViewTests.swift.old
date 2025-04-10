@@ -1,0 +1,258 @@
+import XCTest
+import SwiftUI
+import SwiftData
+import ViewInspector
+@testable import HuntandCrawl
+
+final class BarCrawlDetailViewTests: XCTestCase {
+    
+    var modelContainer: ModelContainer!
+    var modelContext: ModelContext!
+    var barCrawl: BarCrawl!
+    var networkMonitor: MockNetworkMonitor!
+    var syncManager: SyncManager!
+    var locationManager: MockableLocationManager!
+    
+    override func setUpWithError() throws {
+        // Set up an in-memory SwiftData container for testing
+        let schema = Schema([
+            BarCrawl.self,
+            BarStop.self,
+            User.self,
+            BarStopVisit.self,
+            SyncEvent.self
+        ])
+        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
+        modelContainer = try ModelContainer(for: schema, configurations: [modelConfiguration])
+        modelContext = ModelContext(modelContainer)
+        
+        // Create a mock bar crawl with bar stops
+        barCrawl = BarCrawl(name: "Test Bar Crawl", description: "Test Description", theme: "Test Theme")
+        
+        // Add bar stops to the bar crawl
+        let barStop1 = BarStop(name: "Bar 1", description: "Description 1", specialDrink: "Drink 1", latitude: 25.761681, longitude: -80.191788)
+        let barStop2 = BarStop(name: "Bar 2", description: "Description 2", specialDrink: "Drink 2", latitude: 25.762681, longitude: -80.192788)
+        barCrawl.barStops = [barStop1, barStop2]
+        
+        modelContext.insert(barCrawl)
+        
+        // Create network monitor and sync manager
+        networkMonitor = MockNetworkMonitor()
+        syncManager = SyncManager(modelContext: modelContext, networkMonitor: networkMonitor)
+        
+        // Create location manager
+        locationManager = MockableLocationManager()
+    }
+    
+    override func tearDownWithError() throws {
+        try modelContext.delete(model: BarStopVisit.self)
+        try modelContext.delete(model: BarStop.self)
+        try modelContext.delete(model: BarCrawl.self)
+        try modelContext.delete(model: SyncEvent.self)
+        modelContainer = nil
+        modelContext = nil
+        barCrawl = nil
+        networkMonitor = nil
+        syncManager = nil
+        locationManager = nil
+    }
+    
+    func testBarCrawlDetailViewDisplaysCorrectInfo() throws {
+        // Create the view
+        let view = BarCrawlDetailView(barCrawl: barCrawl, syncManager: syncManager, networkMonitor: networkMonitor, locationManager: locationManager)
+        
+        // Inspect the view
+        let barCrawlName = try view.inspect().find(viewWithId: "barCrawlName").text().string()
+        let barCrawlDescription = try view.inspect().find(viewWithId: "barCrawlDescription").text().string()
+        let barCrawlTheme = try view.inspect().find(viewWithId: "barCrawlTheme").text().string()
+        
+        // Verify the displayed information
+        XCTAssertEqual(barCrawlName, "Test Bar Crawl")
+        XCTAssertEqual(barCrawlDescription, "Test Description")
+        XCTAssertEqual(barCrawlTheme, "Test Theme")
+    }
+    
+    func testBarCrawlDetailViewDisplaysOfflineStatus() throws {
+        // Set network to offline
+        networkMonitor.isConnected = false
+        
+        // Create the view
+        let view = BarCrawlDetailView(barCrawl: barCrawl, syncManager: syncManager, networkMonitor: networkMonitor, locationManager: locationManager)
+        
+        // Inspect the view
+        let offlineIndicator = try? view.inspect().find(viewWithId: "offlineIndicator")
+        
+        // Verify offline indicator is present
+        XCTAssertNotNil(offlineIndicator)
+    }
+    
+    func testBarCrawlDetailViewHidesOfflineStatusWhenOnline() throws {
+        // Set network to online
+        networkMonitor.isConnected = true
+        
+        // Create the view
+        let view = BarCrawlDetailView(barCrawl: barCrawl, syncManager: syncManager, networkMonitor: networkMonitor, locationManager: locationManager)
+        
+        // Try to find the offline indicator (should throw an error)
+        XCTAssertThrowsError(try view.inspect().find(viewWithId: "offlineIndicator"))
+    }
+    
+    func testBarCrawlDetailViewDisplaysBarStopList() throws {
+        // Create the view
+        let view = BarCrawlDetailView(barCrawl: barCrawl, syncManager: syncManager, networkMonitor: networkMonitor, locationManager: locationManager)
+        
+        // Find the bar stop list
+        let barStopList = try view.inspect().find(viewWithId: "barStopList")
+        
+        // Get the number of bar stops
+        let barStopsCount = try barStopList.forEach().count
+        
+        // Verify the correct number of bar stops is displayed
+        XCTAssertEqual(barStopsCount, 2)
+    }
+    
+    func testBarCrawlDetailViewCheckInWhenOffline() throws {
+        // Set network to offline
+        networkMonitor.isConnected = false
+        
+        // Create the view
+        let view = BarCrawlDetailView(barCrawl: barCrawl, syncManager: syncManager, networkMonitor: networkMonitor, locationManager: locationManager)
+        
+        // Create a bar stop visit
+        let barStop = barCrawl.barStops!.first!
+        
+        // Simulate check-in through the view
+        view.checkIn(barStop: barStop)
+        
+        // Fetch bar stop visits
+        let visitDescriptor = FetchDescriptor<BarStopVisit>()
+        let visits = try modelContext.fetch(visitDescriptor)
+        
+        // Verify a visit was created
+        XCTAssertEqual(visits.count, 1)
+        XCTAssertEqual(visits.first?.barStopId, barStop.id)
+        
+        // Fetch sync events
+        let syncDescriptor = FetchDescriptor<SyncEvent>()
+        let syncEvents = try modelContext.fetch(syncDescriptor)
+        
+        // Verify a sync event was created
+        XCTAssertEqual(syncEvents.count, 1)
+        XCTAssertEqual(syncEvents.first?.eventType, "barStopVisit")
+    }
+    
+    func testBarCrawlDetailViewProgressCalculation() throws {
+        // Create the view
+        let view = BarCrawlDetailView(barCrawl: barCrawl, syncManager: syncManager, networkMonitor: networkMonitor, locationManager: locationManager)
+        
+        // Initially, no bar stops are visited
+        XCTAssertEqual(view.visitedStopsCount, 0)
+        XCTAssertEqual(view.progressPercentage, 0)
+        
+        // Visit the first bar stop
+        let barStop = barCrawl.barStops!.first!
+        let barStopVisit = BarStopVisit(
+            barStopId: barStop.id,
+            barCrawlId: barCrawl.id,
+            visitedAt: Date(),
+            verificationMethod: "manual"
+        )
+        modelContext.insert(barStopVisit)
+        
+        // Simulate view refresh
+        view.refreshVisitedStops()
+        
+        // Now one bar stop is visited, progress should be 50%
+        XCTAssertEqual(view.visitedStopsCount, 1)
+        XCTAssertEqual(view.progressPercentage, 0.5)
+        
+        // Visit the second bar stop
+        let barStop2 = barCrawl.barStops![1]
+        let barStopVisit2 = BarStopVisit(
+            barStopId: barStop2.id,
+            barCrawlId: barCrawl.id,
+            visitedAt: Date(),
+            verificationMethod: "manual"
+        )
+        modelContext.insert(barStopVisit2)
+        
+        // Simulate view refresh
+        view.refreshVisitedStops()
+        
+        // Now both bar stops are visited, progress should be 100%
+        XCTAssertEqual(view.visitedStopsCount, 2)
+        XCTAssertEqual(view.progressPercentage, 1.0)
+    }
+    
+    func testLocationBasedBarStopVerification() throws {
+        // Create the view
+        let view = BarCrawlDetailView(barCrawl: barCrawl, syncManager: syncManager, networkMonitor: networkMonitor, locationManager: locationManager)
+        
+        // Set up user location close to bar stop 1
+        let barStop = barCrawl.barStops!.first!
+        let userLocation = CLLocation(latitude: barStop.latitude, longitude: barStop.longitude)
+        locationManager.simulateLocationUpdate(location: userLocation)
+        
+        // Check if bar stop can be verified by location
+        let canVerify = view.canVerifyBarStopByLocation(barStop: barStop)
+        
+        // Bar stop should be verifiable
+        XCTAssertTrue(canVerify)
+        
+        // Set up user location far from bar stop 2
+        let barStop2 = barCrawl.barStops![1]
+        let farLocation = CLLocation(latitude: barStop2.latitude + 1.0, longitude: barStop2.longitude + 1.0)
+        locationManager.simulateLocationUpdate(location: farLocation)
+        
+        // Check if bar stop can be verified by location
+        let canVerify2 = view.canVerifyBarStopByLocation(barStop: barStop2)
+        
+        // Bar stop should not be verifiable
+        XCTAssertFalse(canVerify2)
+    }
+    
+    func testCheckInButtonDisabledForVisitedBarStops() throws {
+        // Create the view
+        let view = BarCrawlDetailView(barCrawl: barCrawl, syncManager: syncManager, networkMonitor: networkMonitor, locationManager: locationManager)
+        
+        // Visit the first bar stop
+        let barStop = barCrawl.barStops!.first!
+        let barStopVisit = BarStopVisit(
+            barStopId: barStop.id,
+            barCrawlId: barCrawl.id,
+            visitedAt: Date(),
+            verificationMethod: "manual"
+        )
+        modelContext.insert(barStopVisit)
+        
+        // Simulate view refresh
+        view.refreshVisitedStops()
+        
+        // Check if bar stop is already visited
+        XCTAssertTrue(view.isBarStopVisited(barStop: barStop))
+        
+        // Check second bar stop (not visited)
+        let barStop2 = barCrawl.barStops![1]
+        XCTAssertFalse(view.isBarStopVisited(barStop: barStop2))
+    }
+    
+    func testSelectedBarStopForCheckIn() throws {
+        // Create the view
+        let view = BarCrawlDetailView(barCrawl: barCrawl, syncManager: syncManager, networkMonitor: networkMonitor, locationManager: locationManager)
+        
+        // Initially, no bar stop is selected
+        XCTAssertNil(view.selectedStop)
+        XCTAssertFalse(view.showCheckIn)
+        
+        // Select a bar stop
+        let barStop = barCrawl.barStops!.first!
+        view.selectBarStopForCheckIn(barStop: barStop)
+        
+        // Verify bar stop is selected and check-in sheet is shown
+        XCTAssertEqual(view.selectedStop?.id, barStop.id)
+        XCTAssertTrue(view.showCheckIn)
+    }
+}
+
+// Add ViewInspector conformance
+extension BarCrawlDetailViewStub: Inspectable {} 

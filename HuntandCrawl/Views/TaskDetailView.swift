@@ -6,7 +6,7 @@ struct TaskDetailView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
     
-    let task: Task
+    let task: HuntTask
     
     @State private var showingCompleteTaskSheet = false
     @State private var showingConfirmationDialog = false
@@ -93,15 +93,13 @@ struct TaskDetailView: View {
                     }
                     
                     if task.verificationMethod == VerificationMethod.location.rawValue, 
-                       let latitude = task.latitude, let longitude = task.longitude {
+                       task.hasLocation {
                         VStack(alignment: .leading, spacing: 4) {
                             Text("Location")
                                 .font(.subheadline)
                                 .fontWeight(.medium)
                             
-                            MapSnapshotView(latitude: latitude, longitude: longitude)
-                                .frame(height: 200)
-                                .cornerRadius(12)
+                            ShipLocationView(task: task)
                                 .padding(.top, 4)
                         }
                         .padding(.top, 8)
@@ -229,27 +227,86 @@ struct VerificationMethodBadge: View {
     }
 }
 
-struct MapSnapshotView: View {
-    let latitude: Double
-    let longitude: Double
+struct ShipLocationView: View {
+    let task: HuntTask
     
     var body: some View {
-        // In a real app, this would be a MapKit snapshot or actual map
-        ZStack {
-            Color.gray.opacity(0.2)
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(alignment: .top) {
+                Image(systemName: "mappin.and.ellipse")
+                    .foregroundColor(.blue)
+                    .font(.title2)
+                
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(task.locationDescription)
+                        .font(.headline)
+                    
+                    if let proximityRange = task.proximityRange {
+                        Text("Need to be within \(proximityRange) feet/meters of this location")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                }
+            }
             
+            // Visual representation of ship deck (simplified)
+            ShipDeckView(deckNumber: task.deckNumber ?? 0, section: task.section)
+                .frame(height: 150)
+                .cornerRadius(12)
+        }
+        .padding()
+        .background(Color.blue.opacity(0.05))
+        .cornerRadius(12)
+    }
+}
+
+struct ShipDeckView: View {
+    let deckNumber: Int
+    let section: String?
+    
+    var body: some View {
+        ZStack {
+            // Ship outline
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color.gray.opacity(0.2))
+            
+            // Ship sections
+            HStack(spacing: 0) {
+                Rectangle()
+                    .fill(section == "Forward" ? Color.blue.opacity(0.3) : Color.gray.opacity(0.1))
+                    .overlay(
+                        Text("Forward")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    )
+                
+                Rectangle()
+                    .fill(section == "Midship" ? Color.blue.opacity(0.3) : Color.gray.opacity(0.1))
+                    .overlay(
+                        Text("Midship")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    )
+                
+                Rectangle()
+                    .fill(section == "Aft" ? Color.blue.opacity(0.3) : Color.gray.opacity(0.1))
+                    .overlay(
+                        Text("Aft")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    )
+            }
+            .padding(20)
+            
+            // Deck label
             VStack {
-                Image(systemName: "map.fill")
-                    .font(.largeTitle)
-                    .foregroundColor(.blue.opacity(0.7))
-                
-                Text("Map View")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-                
-                Text("(\(latitude), \(longitude))")
-                    .font(.caption2)
-                    .foregroundColor(.secondary)
+                Spacer()
+                Text("Deck \(deckNumber)")
+                    .font(.headline)
+                    .padding(8)
+                    .background(Color.white.opacity(0.8))
+                    .cornerRadius(8)
+                    .padding(.bottom, 8)
             }
         }
     }
@@ -343,20 +400,22 @@ extension TaskCompletion {
 
 #Preview {
     NavigationStack {
-        TaskDetailView(task: Task.example)
+        TaskDetailView(task: HuntTask.example)
     }
     .modelContainer(PreviewContainer.previewContainer)
 }
 
-extension Task {
-    static var example: Task {
-        let task = Task(
+extension HuntTask {
+    static var example: HuntTask {
+        let task = HuntTask(
             title: "Find the secret mural", 
             taskDescription: "Locate the hidden mural in the downtown area and take a photo as proof. The mural was painted by a local artist in 2022.",
             points: 150,
             verificationMethod: .photo,
-            latitude: 37.7749,
-            longitude: -122.4194
+            deckNumber: 8,
+            locationOnShip: "Promenade Deck",
+            section: "Forward",
+            proximityRange: 50
         )
         return task
     }

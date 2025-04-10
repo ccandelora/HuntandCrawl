@@ -15,6 +15,16 @@ enum TaskVerificationMethod: String, CaseIterable, Identifiable {
     var id: String { self.rawValue }
 }
 
+// Define ship sections for selection
+enum ShipSection: String, CaseIterable, Identifiable {
+    case forward = "Forward"
+    case midship = "Midship"
+    case aft = "Aft"
+    case notSpecified = "Not Specified"
+    
+    var id: String { self.rawValue }
+}
+
 // Define a helper class for photo loading
 fileprivate class TaskCreatorPhotoLoader {
     func loadPhoto(from item: PhotosPickerItem, completion: @escaping (Data?) -> Void) {
@@ -37,21 +47,22 @@ struct TaskCreatorView: View {
     @Environment(LocationManager.self) private var locationManager
     
     // Task Properties
-    @State private var name: String = "" // Changed from title
+    @State private var name: String = ""
     @State private var descriptionText: String = "" 
     @State private var instructions: String = "" 
     @State private var points: Int = 10
     @State private var verificationMethod: TaskVerificationMethod = .photo
-    @State private var radius: Double = 50 // Default radius for location tasks
+    @State private var proximityRange: Int = 50 // Default proximity range in feet/meters
     @State private var question: String = ""
     @State private var answer: String = ""
     @State private var hint: String = ""
     @State private var order: Int = 1
     
-    // Location Selection
-    @State private var selectedLocation: CLLocationCoordinate2D? = nil
-    @State private var showingMapSheet = false
-
+    // Ship Location
+    @State private var deckNumber: Int = 8 // Default deck
+    @State private var locationOnShip: String = ""
+    @State private var section: ShipSection = .midship
+    
     // Photo Upload (Optional Image for Task, not for evidence)
     @State private var selectedPhotoItem: PhotosPickerItem? = nil
     @State private var taskImageData: Data? = nil
@@ -68,16 +79,16 @@ struct TaskCreatorView: View {
 
     var isFormValid: Bool {
         !name.isEmpty && (
-            verificationMethod != .location || selectedLocation != nil
+            verificationMethod != .location || 
+            (!locationOnShip.isEmpty && deckNumber > 0)
         )
-        // Add other checks, e.g., question/answer for question type
     }
     
     var body: some View {
         NavigationStack {
             Form {
                 Section("Basic Info") {
-                    TextField("Task Name", text: $name) // Changed label
+                    TextField("Task Name", text: $name)
                     TextField("Description", text: $descriptionText, axis: .vertical)
                     TextField("Instructions", text: $instructions, axis: .vertical)
                     Stepper("Points: \(points)", value: $points, in: 5...100, step: 5)
@@ -92,18 +103,32 @@ struct TaskCreatorView: View {
                     }
                     
                     if verificationMethod == .location {
+                        // Ship Location Selection
+                        Stepper("Deck: \(deckNumber)", value: $deckNumber, in: 1...20)
+                        
+                        TextField("Location (e.g., Main Dining)", text: $locationOnShip)
+                            .autocapitalization(.words)
+                        
+                        Picker("Section", selection: $section) {
+                            ForEach(ShipSection.allCases) { section in
+                                Text(section.rawValue).tag(section)
+                            }
+                        }
+                        
                         HStack {
-                            Text("Radius (meters)")
+                            Text("Proximity Range")
                             Spacer()
-                            TextField("50", value: $radius, format: .number)
+                            TextField("50", value: $proximityRange, format: .number)
                                 .keyboardType(.decimalPad)
                                 .frame(width: 80)
+                            Text("feet")
                         }
-                        if let location = selectedLocation {
-                            Text("Lat: \(location.latitude, specifier: "%.4f"), Lon: \(location.longitude, specifier: "%.4f")")
-                        }
-                        Button(selectedLocation == nil ? "Select Location" : "Change Location") {
-                            showingMapSheet = true
+                        
+                        // Location summary
+                        if !locationOnShip.isEmpty {
+                            Text("Location: Deck \(deckNumber), \(locationOnShip), \(section.rawValue)")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
                         }
                     } else if verificationMethod == .question {
                         TextField("Question", text: $question, axis: .vertical)
@@ -114,7 +139,7 @@ struct TaskCreatorView: View {
                 Section("Optional Details") {
                     TextField("Hint (Optional)", text: $hint, axis: .vertical)
                     // Optional Task Image Section
-                     PhotosPicker(selection: $selectedPhotoItem, matching: .images, photoLibrary: .shared()) { // Added library
+                     PhotosPicker(selection: $selectedPhotoItem, matching: .images, photoLibrary: .shared()) {
                          Label(taskImageData == nil ? "Add Task Image" : "Change Image", systemImage: "photo")
                      }
                      if let imageData = taskImageData, let uiImage = UIImage(data: imageData) {
@@ -137,9 +162,6 @@ struct TaskCreatorView: View {
                         .disabled(!isFormValid)
                 }
             }
-            .sheet(isPresented: $showingMapSheet) {
-                LocationPicker(selectedCoordinate: $selectedLocation)
-            }
             .onChange(of: selectedPhotoItem) { oldValue, newValue in
                  if let item = newValue {
                      let loader = TaskCreatorPhotoLoader()
@@ -154,18 +176,16 @@ struct TaskCreatorView: View {
     }
     
     private func saveTask() {
-        let latitude = verificationMethod == .location ? selectedLocation?.latitude : nil
-        let longitude = verificationMethod == .location ? selectedLocation?.longitude : nil
-        
-        let newTask = Task(
+        let newTask = HuntTask(
             title: name,
             subtitle: nil,
             taskDescription: descriptionText.isEmpty ? nil : descriptionText,
             points: points,
             verificationMethod: mapVerificationMethod(verificationMethod),
-            latitude: latitude,
-            longitude: longitude,
-            radius: verificationMethod == .location ? radius : nil,
+            deckNumber: verificationMethod == .location ? deckNumber : nil,
+            locationOnShip: verificationMethod == .location ? locationOnShip : nil,
+            section: verificationMethod == .location ? (section == .notSpecified ? nil : section.rawValue) : nil,
+            proximityRange: verificationMethod == .location ? proximityRange : nil,
             question: verificationMethod == .question ? question : nil,
             answer: verificationMethod == .question ? answer : nil,
             order: order
@@ -206,72 +226,10 @@ struct TaskCreatorView: View {
     }
 }
 
-// Simple Location Picker View (Needs to be implemented or use an existing one)
-struct LocationPicker: View {
-    @Binding var selectedCoordinate: CLLocationCoordinate2D?
-    @Environment(\.dismiss) var dismiss
-    
-    // Default region
-    @State private var region = MKCoordinateRegion(
-        center: CLLocationCoordinate2D(latitude: 34.0522, longitude: -118.2437),
-        span: MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1)
-    )
-    @State private var selectedMapItem: MKMapItem? = nil
-    
-    var body: some View {
-        NavigationStack {
-            ZStack(alignment: .bottom) {
-                MapReader { reader in
-                    Map(initialPosition: .region(region)) {
-                        // Optional: Show existing bar stops from the crawl?
-                        // Add marker for selection
-                        if let coord = selectedCoordinate {
-                             Marker("Selected Location", coordinate: coord)
-                        }
-                    }
-                    .onTapGesture { screenCoord in
-                        let mapCoord = reader.convert(screenCoord, from: .local)
-                        if let mapCoord = mapCoord {
-                            selectedCoordinate = mapCoord
-                            selectedMapItem = MKMapItem(placemark: MKPlacemark(coordinate: mapCoord))
-                        }
-                    }
-                }
-                
-                if let item = selectedMapItem {
-                    VStack {
-                        Text(item.name ?? "Selected Location")
-                        Text("Lat: \(item.placemark.coordinate.latitude, specifier: "%.4f"), Lon: \(item.placemark.coordinate.longitude, specifier: "%.4f")")
-                            .font(.caption)
-                        Button("Confirm Location") { dismiss() }
-                            .buttonStyle(.borderedProminent)
-                            .padding()
-                    }
-                    .padding()
-                    .background(.thinMaterial)
-                    .cornerRadius(10)
-                    .padding()
-                }
-            }
-            .navigationTitle("Select Location")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                 ToolbarItem(placement: .navigationBarLeading) {
-                     Button("Cancel") { selectedCoordinate = nil; dismiss() } // Clear selection on cancel
-                 }
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Done") { dismiss() }
-                        .disabled(selectedCoordinate == nil)
-                }
-            }
-        }
-    }
-}
-
 #Preview {
     let previewContainer: ModelContainer = {
         let config = ModelConfiguration(isStoredInMemoryOnly: true)
-        let container = try! ModelContainer(for: Task.self, Hunt.self, configurations: config)
+        let container = try! ModelContainer(for: HuntTask.self, Hunt.self, configurations: config)
         let context = container.mainContext
         let user = User(username: "Preview", displayName: "Preview")
         let hunt = Hunt(name: "Preview Hunt", huntDescription: "Desc", startTime: Date(), endTime: Date())

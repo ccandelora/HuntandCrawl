@@ -32,7 +32,7 @@ struct TeamCreatorView: View {
     }
     
     private func createTeam() {
-        let team = Team(name: teamName)
+        let team = Team(name: teamName, creatorId: "new_user")
         modelContext.insert(team)
         
         try? modelContext.save()

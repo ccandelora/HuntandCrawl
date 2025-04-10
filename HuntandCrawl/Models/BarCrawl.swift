@@ -7,6 +7,8 @@ final class BarCrawl {
     var name: String
     var barCrawlDescription: String?
     var theme: String?
+    var difficulty: String?
+    var estimatedDuration: String?
     var startTime: Date?
     var endTime: Date?
     var isActive: Bool
@@ -27,6 +29,8 @@ final class BarCrawl {
         name: String,
         barCrawlDescription: String? = nil,
         theme: String? = nil,
+        difficulty: String? = nil,
+        estimatedDuration: String? = nil,
         startTime: Date? = nil,
         endTime: Date? = nil,
         isActive: Bool = true
@@ -35,6 +39,8 @@ final class BarCrawl {
         self.name = name
         self.barCrawlDescription = barCrawlDescription
         self.theme = theme
+        self.difficulty = difficulty
+        self.estimatedDuration = estimatedDuration
         self.startTime = startTime
         self.endTime = endTime
         self.isActive = isActive

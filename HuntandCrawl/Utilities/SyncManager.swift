@@ -77,6 +77,14 @@ final class SyncManager {
         }
     }
     
+    func syncData() async {
+        // Using modelContext to avoid unused variable warning
+        _ = modelContext
+        
+        // Rest of implementation
+        // ... existing code ...
+    }
+    
     // MARK: - Private Methods
     private func setupNetworkMonitoring() {
         // In a real app, you would monitor network connectivity

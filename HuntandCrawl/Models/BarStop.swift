@@ -12,6 +12,9 @@ final class BarStop {
     var checkInRadius: Double
     var latitude: Double?
     var longitude: Double?
+    var deckNumber: Int?
+    var locationOnShip: String?
+    var section: String?
     var openingTime: Date?
     var closingTime: Date?
     var order: Int
@@ -34,6 +37,9 @@ final class BarStop {
         checkInRadius: Double = 50,
         latitude: Double? = nil,
         longitude: Double? = nil,
+        deckNumber: Int? = nil,
+        locationOnShip: String? = nil,
+        section: String? = nil,
         openingTime: Date? = nil,
         closingTime: Date? = nil,
         order: Int = 0,
@@ -47,6 +53,9 @@ final class BarStop {
         self.checkInRadius = checkInRadius
         self.latitude = latitude
         self.longitude = longitude
+        self.deckNumber = deckNumber
+        self.locationOnShip = locationOnShip
+        self.section = section
         self.openingTime = openingTime
         self.closingTime = closingTime
         self.order = order
@@ -57,14 +66,34 @@ final class BarStop {
 
 extension BarStop {
     var hasLocation: Bool {
-        return latitude != nil && longitude != nil
+        return deckNumber != nil && locationOnShip != nil
     }
     
-    var coordinate: CLLocationCoordinate2D? {
-        guard let latitude = latitude, let longitude = longitude else {
-            return nil
+    var locationDescription: String {
+        var description = ""
+        
+        if let deck = deckNumber {
+            description += "Deck \(deck)"
         }
-        return CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+        
+        if let location = locationOnShip {
+            if !description.isEmpty {
+                description += ", "
+            }
+            description += location
+        }
+        
+        if let section = section {
+            if !description.isEmpty {
+                description += " ("
+            }
+            description += section
+            if !description.isEmpty && description.contains("(") {
+                description += ")"
+            }
+        }
+        
+        return description.isEmpty ? "Location unknown" : description
     }
     
     var isOpen: Bool {

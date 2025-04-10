@@ -38,7 +38,7 @@ struct TaskCompletionView: View {
     @Environment(\.dismiss) var dismiss
     @Environment(LocationManager.self) private var locationManager
 
-    let task: Task
+    let task: HuntTask
     @State private var completion: TaskCompletion? // Store the fetched/created completion
 
     // State for evidence
@@ -49,6 +49,11 @@ struct TaskCompletionView: View {
     @State private var verificationStatusMessage: String? = nil
     @State private var isSaving = false
     @State private var alreadyCompletedMessage: String? = nil
+
+    // Add these state variables
+    @State private var currentDeck: Int = 1
+    @State private var currentLocation: String = ""
+    @State private var currentSection: String = ""
 
     private let photoLoader = TaskPhotoLoader()
 
@@ -176,30 +181,48 @@ struct TaskCompletionView: View {
     @ViewBuilder
     private var locationEvidenceView: some View {
         VStack(alignment: .leading) {
-            // Safe unwrap radius with a default value
-            let radius = task.radius ?? 50 // Default 50 meters
-            Text("You need to be within \(Int(radius)) meters of the target location.")
-            
-            if let userLocation = locationManager.userLocation, 
-               let latitude = task.latitude, 
-               let longitude = task.longitude {
-                // Direct distance calculation using LocationManager
-                let distance = locationManager.distanceToCoordinate(
-                    latitude: latitude,
-                    longitude: longitude
-                )
+            if let proximityRange = task.proximityRange {
+                Text("You need to be at: \(task.locationDescription)")
                 
-                Text("Your distance: \(Int(distance)) meters")
-                    .foregroundColor(distance <= radius ? .green : .orange)
-
-                Button("Verify Location Now") {
-                    verifyLocation()
+                if let deckNumber = task.deckNumber, 
+                   let locationOnShip = task.locationOnShip {
+                    Text("Verify your location by selecting the correct deck and location:")
+                    
+                    VStack(alignment: .leading, spacing: 12) {
+                        // Current deck selection
+                        Picker("Current Deck", selection: $currentDeck) {
+                            ForEach(1...20, id: \.self) { deck in
+                                Text("Deck \(deck)").tag(deck)
+                            }
+                        }
+                        .pickerStyle(.menu)
+                        
+                        // Current location input
+                        TextField("Current Location (e.g., Main Dining)", text: $currentLocation)
+                            .textFieldStyle(.roundedBorder)
+                        
+                        // Current section selection
+                        Picker("Section", selection: $currentSection) {
+                            Text("Forward").tag("Forward")
+                            Text("Midship").tag("Midship")
+                            Text("Aft").tag("Aft")
+                            Text("Not specified").tag("")
+                        }
+                        .pickerStyle(.segmented)
+                        
+                        Button("Verify Location Now") {
+                            verifyLocation()
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .padding(.top)
+                    }
+                } else {
+                    Text("Error: Task location not properly configured.")
+                        .foregroundColor(.red)
                 }
-                .buttonStyle(.borderedProminent)
-                .padding(.top)
             } else {
-                Text("Waiting for your location...")
-                ProgressView()
+                Text("Location details not available for this task.")
+                    .foregroundColor(.orange)
             }
         }
     }
@@ -302,23 +325,39 @@ struct TaskCompletionView: View {
     }
 
     private func verifyLocation() {
-        guard let latitude = task.latitude, let longitude = task.longitude, 
-              let radius = task.radius else {
+        guard let taskDeck = task.deckNumber,
+              let taskLocation = task.locationOnShip,
+              let proximityRange = task.proximityRange else {
             verificationStatusMessage = "Error: Task location not set correctly."
             return
         }
         
-        if let userLocation = locationManager.userLocation {
-            let distance = locationManager.distanceToCoordinate(latitude: latitude, longitude: longitude)
-            
-            if distance <= radius {
-                // Mark as verified if within radius
-                saveCompletion(isVerified: true)
-            } else {
-                verificationStatusMessage = "You're not close enough to the location. Try moving closer."
-            }
+        // Basic match logic - we can expand this to be more flexible
+        let deckMatch = currentDeck == taskDeck
+        
+        // Simple fuzzy match for location (contains)
+        let locationMatch = currentLocation.lowercased().contains(taskLocation.lowercased()) || 
+                            taskLocation.lowercased().contains(currentLocation.lowercased())
+        
+        // Optional section match
+        let sectionMatch = task.section == nil || 
+                          task.section?.isEmpty == true || 
+                          currentSection == task.section
+        
+        if deckMatch && locationMatch && sectionMatch {
+            // Success - verify the task
+            saveCompletion(isVerified: true)
         } else {
-            verificationStatusMessage = "Unable to determine your location. Please try again."
+            // Failed verification
+            if !deckMatch {
+                verificationStatusMessage = "Wrong deck. Please verify you're on deck \(taskDeck)."
+            } else if !locationMatch {
+                verificationStatusMessage = "Location doesn't match. Please check you're at \(taskLocation)."
+            } else if !sectionMatch {
+                verificationStatusMessage = "Wrong section. The task is in the \(task.section ?? "unknown") section."
+            } else {
+                verificationStatusMessage = "Location verification failed. Please try again."
+            }
         }
     }
 
@@ -428,7 +467,7 @@ struct TaskCompletionView: View {
 
 #Preview {
     NavigationStack {
-        TaskCompletionView(task: Task(
+        TaskCompletionView(task: HuntTask(
             title: "Sample Task",
             points: 10,
             verificationMethod: .photo

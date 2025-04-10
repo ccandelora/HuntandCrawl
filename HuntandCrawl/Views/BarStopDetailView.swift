@@ -197,11 +197,9 @@ struct VisitRow: View {
                         .font(.subheadline)
                         .fontWeight(.medium)
                     
-                    if let visitDate = visit.visitedAt {
-                        Text("Visited on \(formatDate(visitDate))")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
+                    Text("Visited on \(formatDate(visit.visitedAt))")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
                     
                     if let drinkOrdered = visit.drinkOrdered, !drinkOrdered.isEmpty {
                         Text("Drink: \(drinkOrdered)")
@@ -266,7 +264,7 @@ struct BarStopDetailView: View {
                 }
                 
                 if barStop.hasLocation {
-                    BarStopLocation(coordinate: barStop.coordinate)
+                    BarStopLocation(coordinate: getCoordinate(from: barStop))
                 }
                 
                 BarStopHours(openTime: barStop.openingTime, closeTime: barStop.closingTime)
@@ -416,4 +414,9 @@ struct MapLocationPreview: View {
             }
         }
     }
+}
+
+private func getCoordinate(from barStop: BarStop) -> CLLocationCoordinate2D? {
+    guard let latitude = barStop.latitude, let longitude = barStop.longitude else { return nil }
+    return CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
 } 

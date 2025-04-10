@@ -10,7 +10,7 @@ extension ModelContainer {
                 Team.self,
                 User.self,
                 Hunt.self,
-                Task.self,
+                HuntTask.self,
                 BarCrawl.self,
                 BarStop.self,
                 TaskCompletion.self,

@@ -312,7 +312,7 @@ struct PreviewContainer {
         let schema = Schema([
             User.self,
             Hunt.self,
-            Task.self,
+            HuntTask.self,
             TaskCompletion.self,
             SyncEvent.self,
             BarCrawl.self,
@@ -341,19 +341,21 @@ struct PreviewContainer {
             hunt1.creator = user
             
             // Add tasks to hunt1
-            let task1 = Task(title: "Find the Captain's Wheel", points: 100, verificationMethod: .photo)
+            let task1 = HuntTask(title: "Find the Captain's Wheel", points: 100, verificationMethod: .photo)
             task1.taskDescription = "Take a photo of yourself at the captain's wheel on the bridge deck"
-            task1.latitude = 25.0001
-            task1.longitude = -80.0001
+            task1.deckNumber = 14
+            task1.locationOnShip = "Bridge Deck"
+            task1.section = "Forward"
             task1.hunt = hunt1
             
-            let task2 = Task(title: "Waterslide Challenge", points: 150, verificationMethod: .photo)
+            let task2 = HuntTask(title: "Waterslide Challenge", points: 150, verificationMethod: .photo)
             task2.taskDescription = "Complete all waterslides and take a photo at the bottom of the biggest one"
-            task2.latitude = 25.0015
-            task2.longitude = -80.0020
+            task2.deckNumber = 12
+            task2.locationOnShip = "Pool Deck"
+            task2.section = "Aft"
             task2.hunt = hunt1
             
-            let task3 = Task(title: "Cruise Trivia", points: 75, verificationMethod: .question)
+            let task3 = HuntTask(title: "Cruise Trivia", points: 75, verificationMethod: .question)
             task3.taskDescription = "Answer this question about the ship"
             task3.question = "In what year was this cruise ship built?"
             task3.answer = "2015"
@@ -381,8 +383,9 @@ struct PreviewContainer {
             // Add bar stops to the bar crawl
             let barStop1 = BarStop(name: "Sunset Bar", specialDrink: "Mai Tai", drinkPrice: 12.99)
             barStop1.barStopDescription = "Enjoy stunning sunset views with a delicious Mai Tai"
-            barStop1.latitude = 25.0005
-            barStop1.longitude = -80.0010
+            barStop1.deckNumber = 15
+            barStop1.locationOnShip = "Pool Deck"
+            barStop1.section = "Aft"
             barStop1.openingTime = Calendar.current.date(bySettingHour: 16, minute: 0, second: 0, of: Date())!
             barStop1.closingTime = Calendar.current.date(bySettingHour: 1, minute: 0, second: 0, of: Date())!
             barStop1.barCrawl = barCrawl
@@ -390,8 +393,9 @@ struct PreviewContainer {
             
             let barStop2 = BarStop(name: "Skyline Lounge", specialDrink: "Blue Horizon", drinkPrice: 14.99)
             barStop2.barStopDescription = "Sophisticated lounge with panoramic views and signature cocktails"
-            barStop2.latitude = 25.0008
-            barStop2.longitude = -80.0015
+            barStop2.deckNumber = 14
+            barStop2.locationOnShip = "Observation Deck"
+            barStop2.section = "Forward"
             barStop2.openingTime = Calendar.current.date(bySettingHour: 18, minute: 0, second: 0, of: Date())!
             barStop2.closingTime = Calendar.current.date(bySettingHour: 2, minute: 0, second: 0, of: Date())!
             barStop2.barCrawl = barCrawl
@@ -412,8 +416,7 @@ struct PreviewContainer {
             modelContext.insert(completion)
             
             // Create a bar stop visit
-            let visit = BarStopVisit(barStop: barStop1, user: user)
-            visit.visitedAt = Date()
+            let visit = BarStopVisit(visitedAt: Date(), barStop: barStop1, user: user)
             modelContext.insert(visit)
             
             try? modelContext.save()

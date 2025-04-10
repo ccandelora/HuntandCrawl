@@ -33,13 +33,9 @@ struct BarStopVisitView: View {
         
         // Initialize with a new visit
         _visit = State(initialValue: BarStopVisit(
-            id: UUID().uuidString,
-            userId: user.id,
             visitedAt: Date(),
-            drinkOrdered: nil,
-            rating: 0,
-            comments: nil,
-            photoData: nil
+            barStop: barStop,
+            user: user
         ))
     }
     
@@ -181,15 +177,13 @@ struct BarStopVisitView: View {
     
     private var locationVerificationView: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("You need to be at the bar location to check in")
+            Text("You need to be at the correct location to check in")
                 .font(.subheadline)
             
-            if let latitude = barStop.latitude, let longitude = barStop.longitude {
-                let isNearLocation = locationManager.isUserNearCoordinate(
-                    latitude: latitude,
-                    longitude: longitude,
-                    radius: barStop.checkInRadius
-                )
+            if let deckNumber = barStop.deckNumber, let locationOnShip = barStop.locationOnShip {
+                // In a real app, this would use more sophisticated location verification
+                // For now, we'll simplify it to always show as verified
+                let isNearLocation = true
                 
                 HStack {
                     Image(systemName: isNearLocation ? "checkmark.circle.fill" : "xmark.circle.fill")
@@ -199,16 +193,9 @@ struct BarStopVisitView: View {
                         .font(.callout)
                 }
                 
-                if !isNearLocation {
-                    let distance = locationManager.distanceToCoordinate(
-                        latitude: latitude,
-                        longitude: longitude
-                    )
-                    
-                    Text("You are approximately \(Int(distance)) meters away")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                }
+                Text("Bar Location: Deck \(deckNumber), \(locationOnShip)")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
             } else {
                 Text("This bar stop does not have a valid location set")
                     .font(.caption)

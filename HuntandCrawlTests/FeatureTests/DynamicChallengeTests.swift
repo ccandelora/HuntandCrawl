@@ -14,7 +14,7 @@ final class DynamicChallengeTests: XCTestCase {
         // Set up an in-memory SwiftData container for testing
         let schema = Schema([
             Hunt.self,
-            Task.self,
+            HuntTask.self,
             User.self,
             Team.self,
             SyncEvent.self,
@@ -36,7 +36,7 @@ final class DynamicChallengeTests: XCTestCase {
     
     override func tearDownWithError() throws {
         // Clear any test data
-        try modelContext.delete(model: Task.self)
+        try modelContext.delete(model: HuntTask.self)
         try modelContext.delete(model: Hunt.self)
         try modelContext.delete(model: User.self)
         try modelContext.delete(model: Team.self)
@@ -79,19 +79,19 @@ final class DynamicChallengeTests: XCTestCase {
             }, receiveValue: { challenge in
                 // Verify that a challenge was created
                 XCTAssertNotNil(challenge)
-                XCTAssertEqual(challenge.huntId, hunt.id)
+                XCTAssertEqual(challenge.hunt?.id, hunt.id)
                 
                 // Verify challenge properties
                 XCTAssertTrue(challenge.title.contains("Team Challenge"))
-                XCTAssertTrue(challenge.isDynamic)
-                XCTAssertEqual(challenge.teamId, team.id)
+                XCTAssertTrue(challenge.subtitle?.contains("Team ID: \(team.id)") ?? false)
                 
                 // Verify that the challenge was added to the hunt
-                XCTAssertTrue(hunt.tasks.contains(where: { $0.id == challenge.id }))
+                XCTAssertTrue(hunt.tasks?.contains(where: { $0.id == challenge.id }) ?? false)
                 
-                // Verify location was set from mock location manager
-                XCTAssertEqual(challenge.latitude, 25.123)
-                XCTAssertEqual(challenge.longitude, -80.456)
+                // Verify location data is set
+                XCTAssertNotNil(challenge.deckNumber)
+                XCTAssertNotNil(challenge.locationOnShip)
+                XCTAssertNotNil(challenge.section)
             })
             .store(in: &dynamicChallengeManager.cancellables)
         
@@ -109,35 +109,48 @@ final class DynamicChallengeTests: XCTestCase {
         let hunt = Hunt(title: "Test Hunt", description: "Test Description", location: "Test Location")
         modelContext.insert(hunt)
         
+        // Format dates the same way the challenge manager would
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .medium
+        
         // Create an active challenge
-        let activeTask = Task(
-            hunt: hunt,
-            name: "Team Challenge: Test",
-            description: "A test challenge",
+        let activeMetadata = """
+        Team Challenge:
+        - Team ID: \(team.id)
+        - Generated: \(formatter.string(from: Date()))
+        - Expires: \(formatter.string(from: Date().addingTimeInterval(3600)))
+        - Requires 2 team members
+        """
+        
+        let activeTask = HuntTask(
+            title: "Team Challenge: Test",
+            subtitle: activeMetadata,
+            taskDescription: "A test challenge",
             points: 100,
-            latitude: 0,
-            longitude: 0,
             verificationMethod: .photo,
             order: 1
         )
-        activeTask.isDynamic = true
-        activeTask.teamId = team.id
-        activeTask.expiresAt = Date().addingTimeInterval(3600) // Expires in 1 hour
+        activeTask.hunt = hunt
         
         // Create an expired challenge
-        let expiredTask = Task(
-            hunt: hunt,
-            name: "Team Challenge: Expired",
-            description: "An expired challenge",
+        let expiredMetadata = """
+        Team Challenge:
+        - Team ID: \(team.id)
+        - Generated: \(formatter.string(from: Date().addingTimeInterval(-7200)))
+        - Expires: \(formatter.string(from: Date().addingTimeInterval(-3600)))
+        - Requires 2 team members
+        """
+        
+        let expiredTask = HuntTask(
+            title: "Team Challenge: Expired",
+            subtitle: expiredMetadata,
+            taskDescription: "An expired challenge",
             points: 100,
-            latitude: 0,
-            longitude: 0,
             verificationMethod: .photo,
             order: 2
         )
-        expiredTask.isDynamic = true
-        expiredTask.teamId = team.id
-        expiredTask.expiresAt = Date().addingTimeInterval(-3600) // Expired 1 hour ago
+        expiredTask.hunt = hunt
         
         hunt.tasks = [activeTask, expiredTask]
         modelContext.insert(activeTask)
@@ -159,55 +172,80 @@ final class DynamicChallengeTests: XCTestCase {
         let hunt = Hunt(title: "Test Hunt", description: "Test Description", location: "Test Location")
         modelContext.insert(hunt)
         
+        // Format dates the same way the challenge manager would
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .medium
+        
         // Create an active challenge
-        let activeTask = Task(
-            hunt: hunt,
-            name: "Team Challenge: Test",
-            description: "A test challenge",
+        let activeMetadata = """
+        Team Challenge:
+        - Team ID: \(team.id)
+        - Generated: \(formatter.string(from: Date()))
+        - Expires: \(formatter.string(from: Date().addingTimeInterval(3600)))
+        - Requires 2 team members
+        """
+        
+        let activeTask = HuntTask(
+            title: "Team Challenge: Test",
+            subtitle: activeMetadata,
+            taskDescription: "A test challenge",
             points: 100,
-            latitude: 0,
-            longitude: 0,
             verificationMethod: .photo,
             order: 1
         )
-        activeTask.isDynamic = true
-        activeTask.teamId = team.id
-        activeTask.expiresAt = Date().addingTimeInterval(3600) // Expires in 1 hour
+        activeTask.hunt = hunt
         
         // Create an expired challenge
-        let expiredTask = Task(
-            hunt: hunt,
-            name: "Team Challenge: Expired",
-            description: "An expired challenge",
+        let expiredMetadata = """
+        Team Challenge:
+        - Team ID: \(team.id)
+        - Generated: \(formatter.string(from: Date().addingTimeInterval(-7200)))
+        - Expires: \(formatter.string(from: Date().addingTimeInterval(-3600)))
+        - Requires 2 team members
+        """
+        
+        let expiredTask = HuntTask(
+            title: "Team Challenge: Expired",
+            subtitle: expiredMetadata,
+            taskDescription: "An expired challenge",
             points: 100,
-            latitude: 0,
-            longitude: 0,
             verificationMethod: .photo,
             order: 2
         )
-        expiredTask.isDynamic = true
-        expiredTask.teamId = team.id
-        expiredTask.expiresAt = Date().addingTimeInterval(-3600) // Expired 1 hour ago
+        expiredTask.hunt = hunt
         
         // Create a completed challenge
-        let completedTask = Task(
-            hunt: hunt,
-            name: "Team Challenge: Completed",
-            description: "A completed challenge",
+        let completedMetadata = """
+        Team Challenge:
+        - Team ID: \(team.id)
+        - Generated: \(formatter.string(from: Date()))
+        - Expires: \(formatter.string(from: Date().addingTimeInterval(3600)))
+        - Requires 2 team members
+        """
+        
+        let completedTask = HuntTask(
+            title: "Team Challenge: Completed",
+            subtitle: completedMetadata,
+            taskDescription: "A completed challenge",
             points: 100,
-            latitude: 0,
-            longitude: 0,
             verificationMethod: .photo,
             order: 3
         )
-        completedTask.isDynamic = true
-        completedTask.teamId = team.id
-        completedTask.isCompleted = true
+        completedTask.hunt = hunt
+        
+        // Add a mock completion to make it completed
+        let completion = TaskCompletion(
+            id: UUID().uuidString, 
+            isVerified: true
+        )
+        completedTask.completions = [completion]
         
         hunt.tasks = [activeTask, expiredTask, completedTask]
         modelContext.insert(activeTask)
         modelContext.insert(expiredTask)
         modelContext.insert(completedTask)
+        modelContext.insert(completion)
         
         // Fetch active challenges
         let activeChallenges = dynamicChallengeManager.fetchActiveChallengesForTeam(team.id)

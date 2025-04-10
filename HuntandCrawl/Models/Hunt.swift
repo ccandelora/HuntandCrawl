@@ -14,8 +14,8 @@ final class Hunt {
     var updatedAt: Date?
     var creatorId: String?
     
-    @Relationship(deleteRule: .cascade, inverse: \Task.hunt)
-    var tasks: [Task]?
+    @Relationship(deleteRule: .cascade, inverse: \HuntTask.hunt)
+    var tasks: [HuntTask]?
     
     @Relationship(deleteRule: .noAction)
     var creator: User?

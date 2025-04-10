@@ -14,7 +14,7 @@ final class NavigationManager: ObservableObject {
     // Enum to define all possible navigation destinations
     enum Destination: Hashable {
         case hunt(Hunt)
-        case task(Task)
+        case task(HuntTask)
         case barCrawl(BarCrawl)
         case barStop(BarStop)
         case user(User)
@@ -22,9 +22,9 @@ final class NavigationManager: ObservableObject {
         case settings
         case nearby
         case map
-        case taskCompletion(Task)
+        case taskCompletion(HuntTask)
         case barStopVisit(BarStop)
-        case taskDetail(Task)
+        case taskDetail(HuntTask)
         case nearbyLocations
         case huntDetail(Hunt)
         case barCrawlDetail(BarCrawl)
@@ -163,12 +163,12 @@ final class NavigationManager: ObservableObject {
         case barStopCreator(BarCrawl)
         case huntDetail(Hunt)
         case barCrawlDetail(BarCrawl)
-        case taskDetail(Task)
+        case taskDetail(HuntTask)
         case barStopDetail(BarStop)
         case profile(User)
         case teamDetail(Team)
         case teamCreator
-        case taskCompletion(Task)
+        case taskCompletion(HuntTask)
         case barStopVisit(BarStop)
         case searchFilter
         case settings
@@ -218,6 +218,16 @@ final class NavigationManager: ObservableObject {
             case .settings:
                 return "settings"
             }
+        }
+        
+        // Add Hashable conformance
+        func hash(into hasher: inout Hasher) {
+            hasher.combine(id)
+        }
+        
+        // Add Equatable conformance
+        static func == (lhs: Sheet, rhs: Sheet) -> Bool {
+            return lhs.id == rhs.id
         }
     }
     
@@ -284,7 +294,7 @@ final class NavigationManager: ObservableObject {
         path.append(Destination.hunt(hunt))
     }
     
-    func navigateToTask(_ task: Task) {
+    func navigateToTask(_ task: HuntTask) {
         path.append(Destination.task(task))
     }
     
@@ -316,7 +326,7 @@ final class NavigationManager: ObservableObject {
         path.append(Destination.map)
     }
     
-    func navigateToTaskCompletion(_ task: Task) {
+    func navigateToTaskCompletion(_ task: HuntTask) {
         path.append(Destination.taskCompletion(task))
     }
     
@@ -328,7 +338,7 @@ final class NavigationManager: ObservableObject {
         path.append(Destination.dynamicChallenges)
     }
     
-    func navigateToTaskDetail(task: Task) {
+    func navigateToTaskDetail(task: HuntTask) {
         path.append(Destination.taskDetail(task))
     }
     

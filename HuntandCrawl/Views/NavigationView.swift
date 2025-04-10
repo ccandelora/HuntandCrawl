@@ -58,7 +58,7 @@ struct NavigationView: View {
             // Map view
             Map(position: $cameraPosition, selection: .constant(nil)) {
                 // Current user location
-                if let userLocation = locationManager.userLocation {
+                if let userLocation = locationManager.state.userLocation {
                     Marker("My Location", coordinate: userLocation.coordinate)
                         .tint(.blue)
                 }
@@ -84,7 +84,7 @@ struct NavigationView: View {
             .onAppear {
                 startNavigation()
             }
-            .onChange(of: locationManager.location) { oldValue, newValue in
+            .onChange(of: locationManager.state.location) { oldValue, newValue in
                 updateCamera()
             }
             
@@ -151,7 +151,7 @@ struct NavigationView: View {
     private var navigationCard: some View {
         VStack(spacing: 0) {
             // Current direction
-            if locationManager.isNavigating, let currentStep = getCurrentNavigationStep() {
+            if locationManager.state.isNavigating, let currentStep = getCurrentNavigationStep() {
                 HStack {
                     VStack(alignment: .leading) {
                         Text("Next Step")
@@ -165,12 +165,12 @@ struct NavigationView: View {
                     
                     Spacer()
                     
-                    if let distance = locationManager.distance {
+                    if let distance = locationManager.state.distance {
                         VStack(alignment: .trailing) {
                             Text(formatDistance(distance))
                                 .font(.headline)
                             
-                            if let time = locationManager.expectedTravelTime {
+                            if let time = locationManager.state.expectedTravelTime {
                                 Text(formatTime(time))
                                     .font(.caption)
                                     .foregroundColor(.secondary)
@@ -209,7 +209,7 @@ struct NavigationView: View {
                 
                 // Navigation status
                 Group {
-                    if locationManager.isNavigating {
+                    if locationManager.state.isNavigating {
                         // Navigation buttons
                         HStack(spacing: 16) {
                             Button(action: centerOnUserLocation) {
@@ -261,42 +261,33 @@ struct NavigationView: View {
     // MARK: - Directions List View
     private var directionsListView: some View {
         List {
-            Section {
-                HStack {
-                    type.icon
-                        .font(.title3)
-                        .foregroundColor(type.iconColor)
+            if let route = locationManager.state.route {
+                // Route summary
+                Section(header: Text("Route Summary")) {
+                    HStack {
+                        Text("Total Distance")
+                        Spacer()
+                        Text(formatDistance(route.distance))
+                    }
                     
-                    Text(destinationName)
-                        .font(.headline)
-                    
-                    Spacer()
-                    
-                    if let distance = locationManager.distance {
-                        Text(formatDistance(distance))
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
+                    HStack {
+                        Text("Estimated Time")
+                        Spacer()
+                        Text(formatTime(route.expectedTravelTime))
                     }
                 }
             }
             
-            Section("Turn-by-Turn Directions") {
-                ForEach(Array(locationManager.navigationDirections.enumerated()), id: \.offset) { index, instruction in
+            // Step by step directions
+            Section(header: Text("Directions")) {
+                ForEach(Array(locationManager.state.navigationDirections.enumerated()), id: \.offset) { index, instruction in
                     HStack {
-                        if index == locationManager.currentNavigationStep {
-                            Circle()
-                                .fill(Color.blue)
-                                .frame(width: 8, height: 8)
-                        } else {
-                            Circle()
-                                .strokeBorder(Color.gray, lineWidth: 1)
-                                .frame(width: 8, height: 8)
-                        }
+                        Text("\(index + 1).")
+                            .foregroundColor(.secondary)
                         
                         Text(instruction)
-                            .foregroundColor(index == locationManager.currentNavigationStep ? .primary : .secondary)
-                        
-                        Spacer()
+                            .fontWeight(index == locationManager.state.currentNavigationStep ? .bold : .regular)
+                            .foregroundColor(index == locationManager.state.currentNavigationStep ? .primary : .secondary)
                     }
                 }
             }
@@ -306,9 +297,11 @@ struct NavigationView: View {
     // MARK: - Helper Methods
     
     private func startNavigation() {
-        let destination = CLLocation(latitude: destinationCoordinate.latitude, longitude: destinationCoordinate.longitude)
+        let destination = CLLocation(
+            latitude: destinationCoordinate.latitude,
+            longitude: destinationCoordinate.longitude
+        )
         locationManager.startNavigation(to: destination)
-        updateCamera()
     }
     
     private func stopNavigation() {
@@ -317,24 +310,22 @@ struct NavigationView: View {
     
     private func updateCamera() {
         // Set camera to follow user location with heading
-        if let userLocation = locationManager.location {
+        if let userLocation = locationManager.state.location {
             // If we have a heading, use it for camera rotation
-            if let heading = locationManager.heading {
-                cameraPosition = .camera(
-                    MapCamera(
-                        centerCoordinate: userLocation.coordinate,
-                        distance: 300, // meters
-                        heading: heading.trueHeading,
-                        pitch: 45 // degrees
-                    )
+            if let heading = locationManager.state.heading {
+                let camera = MapCamera(
+                    centerCoordinate: userLocation.coordinate,
+                    distance: 500,
+                    heading: heading.magneticHeading,
+                    pitch: 60
                 )
+                cameraPosition = .camera(camera)
             } else {
-                cameraPosition = .camera(
-                    MapCamera(
-                        centerCoordinate: userLocation.coordinate,
-                        distance: 300 // meters
-                    )
-                )
+                // No heading, just center on location
+                cameraPosition = .camera(MapCamera(
+                    centerCoordinate: userLocation.coordinate,
+                    distance: 500
+                ))
             }
         }
     }
@@ -344,7 +335,7 @@ struct NavigationView: View {
     }
     
     private func showFullRoute() {
-        if let route = locationManager.route {
+        if let route = locationManager.state.route {
             // Create a region that encompasses the entire route
             let rect = route.polyline.boundingMapRect
             cameraPosition = .rect(MKMapRect(
@@ -357,13 +348,13 @@ struct NavigationView: View {
     }
     
     private func getCurrentNavigationStep() -> String? {
-        guard locationManager.isNavigating, 
-              !locationManager.navigationDirections.isEmpty,
-              locationManager.currentNavigationStep < locationManager.navigationDirections.count else {
+        guard locationManager.state.isNavigating, 
+              !locationManager.state.navigationDirections.isEmpty,
+              locationManager.state.currentNavigationStep < locationManager.state.navigationDirections.count else {
             return nil
         }
         
-        return locationManager.navigationDirections[locationManager.currentNavigationStep]
+        return locationManager.state.navigationDirections[locationManager.state.currentNavigationStep]
     }
     
     private func formatDistance(_ distance: CLLocationDistance) -> String {

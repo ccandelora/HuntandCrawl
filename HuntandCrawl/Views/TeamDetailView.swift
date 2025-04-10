@@ -49,6 +49,6 @@ struct TeamDetailView: View {
 }
 
 #Preview {
-    TeamDetailView(team: Team(name: "Preview Team"))
+    TeamDetailView(team: Team(name: "Preview Team", creatorId: "123"))
         .modelContainer(for: Team.self, inMemory: true)
 } 

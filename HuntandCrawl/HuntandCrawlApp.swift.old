@@ -1,0 +1,113 @@
+//
+//  HuntandCrawlApp.swift
+//  HuntandCrawl
+//
+//  Created by Chris Candelora on 3/26/25.
+//
+
+// swift-tools-version:5.9
+// The swift-tools-version declares the minimum version of Swift required to build this package.
+// To resolve 'main' attribute issue, pass '-parse-as-library' to compiler invocation if intentional
+
+import SwiftUI
+import SwiftData
+
+struct HuntandCrawlApp: App {
+    @State private var isLoadingData = false
+    @State private var dataLoadComplete = false
+    
+    // Add network monitor for connectivity tracking
+    let networkMonitor = NetworkMonitor()
+    
+    let sharedModelContainer: ModelContainer = {
+        let schema = Schema([
+            User.self,
+            Team.self,
+            Hunt.self,
+            HuntTask.self,
+            BarCrawl.self,
+            BarStop.self,
+            BarStopVisit.self,
+            CruiseLine.self,
+            CruiseShip.self,
+            CruiseBar.self,
+            CruiseBarStop.self,
+            CruiseBarCrawlStop.self,
+            CruiseBarCrawlRoute.self
+        ])
+        
+        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
+        
+        do {
+            return try ModelContainer(for: schema, configurations: [modelConfiguration])
+        } catch {
+            fatalError("Could not create ModelContainer: \(error)")
+        }
+    }()
+    
+    var body: some Scene {
+        WindowGroup {
+            ContentView()
+                .modelContainer(sharedModelContainer)
+                .onAppear {
+                    checkAndLoadCruiseData(into: sharedModelContainer.mainContext)
+                }
+                .overlay {
+                    if isLoadingData {
+                        ZStack {
+                            Color.black.opacity(0.5).ignoresSafeArea()
+                            VStack {
+                                ProgressView()
+                                    .scaleEffect(1.5)
+                                    .tint(.white)
+                                    .padding()
+                                Text("Loading cruise data...")
+                                    .foregroundColor(.white)
+                                    .font(.headline)
+                                    .padding()
+                            }
+                            .background(Color(.systemBackground).opacity(0.8))
+                            .cornerRadius(12)
+                            .shadow(radius: 10)
+                        }
+                    }
+                }
+        }
+    }
+    
+    private func checkAndLoadCruiseData(into context: ModelContext) {
+        // Check if we've already loaded the data
+        if UserDefaults.standard.bool(forKey: "cruiseDataLoaded") {
+            print("Cruise data already loaded.")
+            return
+        }
+        
+        // Check if we already have cruise lines in the database
+        let descriptor = FetchDescriptor<CruiseLine>()
+        do {
+            let cruiseLines = try context.fetch(descriptor)
+            if !cruiseLines.isEmpty {
+                print("Cruise data already exists in database.")
+                UserDefaults.standard.set(true, forKey: "cruiseDataLoaded")
+                return
+            }
+        } catch {
+            print("Error checking for existing cruise data: \(error)")
+        }
+        
+        // Load the data
+        isLoadingData = true
+        
+        CruiseDataService.shared.loadAllData(into: context) { success in
+            self.isLoadingData = false
+            self.dataLoadComplete = true
+            
+            if success {
+                print("Successfully loaded all cruise data")
+                UserDefaults.standard.set(true, forKey: "cruiseDataLoaded")
+            } else {
+                print("Failed to load cruise data")
+            }
+        }
+    }
+}

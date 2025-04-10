@@ -18,12 +18,12 @@ class TeamTests: XCTestCase {
     }
     
     func testCreateTeam() throws {
-        let context = modelContainer.mainContext
+        let context = ModelContext(modelContainer)
         
         // Create a team
         let teamName = "Adventure Squad"
-        let teamLogo = "squad_logo".data(using: .utf8)
-        let team = Team(name: teamName, logo: teamLogo)
+        let teamImageData = "squad_logo".data(using: .utf8)
+        let team = Team(name: teamName, teamImageData: teamImageData)
         
         // Insert into context
         context.insert(team)
@@ -36,7 +36,7 @@ class TeamTests: XCTestCase {
         XCTAssertEqual(teams.count, 1)
         XCTAssertEqual(teams.first?.name, teamName)
         
-        if let savedLogo = teams.first?.logo,
+        if let savedLogo = teams.first?.teamImageData,
            let logoString = String(data: savedLogo, encoding: .utf8) {
             XCTAssertEqual(logoString, "squad_logo")
         } else {
@@ -45,7 +45,7 @@ class TeamTests: XCTestCase {
     }
     
     func testTeamWithMembers() throws {
-        let context = modelContainer.mainContext
+        let context = ModelContext(modelContainer)
         
         // Create a team
         let team = Team(name: "Dream Team")
@@ -76,7 +76,7 @@ class TeamTests: XCTestCase {
     }
     
     func testTeamWithHunts() throws {
-        let context = modelContainer.mainContext
+        let context = ModelContext(modelContainer)
         
         // Create a team
         let team = Team(name: "Treasure Hunters")
@@ -91,7 +91,8 @@ class TeamTests: XCTestCase {
         context.insert(hunt2)
         
         // Add hunts to team
-        team.hunts = [hunt1, hunt2]
+        team.activeHunt = hunt1
+        team.completedHunts = [hunt2]
         
         // Fetch the team
         let descriptor = FetchDescriptor<Team>()
@@ -99,15 +100,16 @@ class TeamTests: XCTestCase {
         
         // Verify team hunts
         XCTAssertEqual(teams.count, 1)
-        XCTAssertEqual(teams.first?.hunts?.count, 2)
+        XCTAssertNotNil(teams.first?.activeHunt)
+        XCTAssertEqual(teams.first?.completedHunts?.count, 1)
         
-        let huntNames = teams.first?.hunts?.map { $0.name } ?? []
-        XCTAssertTrue(huntNames.contains("Beach Treasure"))
+        XCTAssertEqual(teams.first?.activeHunt?.name, "Beach Treasure")
+        let huntNames = teams.first?.completedHunts?.map { $0.name } ?? []
         XCTAssertTrue(huntNames.contains("Mountain Adventure"))
     }
     
     func testTeamWithBarCrawls() throws {
-        let context = modelContainer.mainContext
+        let context = ModelContext(modelContainer)
         
         // Create a team
         let team = Team(name: "Bar Hoppers")
@@ -121,24 +123,21 @@ class TeamTests: XCTestCase {
         context.insert(barCrawl1)
         context.insert(barCrawl2)
         
-        // Add bar crawls to team
-        team.barCrawls = [barCrawl1, barCrawl2]
+        // Add bar crawl to team
+        team.barCrawl = barCrawl1
         
         // Fetch the team
         let descriptor = FetchDescriptor<Team>()
         let teams = try context.fetch(descriptor)
         
-        // Verify team bar crawls
+        // Verify team bar crawl
         XCTAssertEqual(teams.count, 1)
-        XCTAssertEqual(teams.first?.barCrawls?.count, 2)
-        
-        let barCrawlNames = teams.first?.barCrawls?.map { $0.name } ?? []
-        XCTAssertTrue(barCrawlNames.contains("Sunset Strip"))
-        XCTAssertTrue(barCrawlNames.contains("Downtown Dive"))
+        XCTAssertNotNil(teams.first?.barCrawl)
+        XCTAssertEqual(teams.first?.barCrawl?.name, "Sunset Strip")
     }
     
     func testUpdateTeam() throws {
-        let context = modelContainer.mainContext
+        let context = ModelContext(modelContainer)
         
         // Create a team
         let team = Team(name: "Original Team")
@@ -149,7 +148,7 @@ class TeamTests: XCTestCase {
         // Update the team
         let newLogo = "new_logo".data(using: .utf8)
         team.name = "Updated Team"
-        team.logo = newLogo
+        team.teamImageData = newLogo
         team.updatedAt = Date()
         
         // Fetch the team
@@ -160,7 +159,7 @@ class TeamTests: XCTestCase {
         XCTAssertEqual(teams.count, 1)
         XCTAssertEqual(teams.first?.name, "Updated Team")
         
-        if let savedLogo = teams.first?.logo,
+        if let savedLogo = teams.first?.teamImageData,
            let logoString = String(data: savedLogo, encoding: .utf8) {
             XCTAssertEqual(logoString, "new_logo")
         } else {
@@ -169,7 +168,7 @@ class TeamTests: XCTestCase {
     }
     
     func testDeleteTeam() throws {
-        let context = modelContainer.mainContext
+        let context = ModelContext(modelContainer)
         
         // Create a team
         let team = Team(name: "Team to Delete")
@@ -192,15 +191,15 @@ class TeamTests: XCTestCase {
     }
     
     func testTeamAssociations() throws {
-        let context = modelContainer.mainContext
+        let context = ModelContext(modelContainer)
         
         // Create a team
         let team = Team(name: "Cruise Explorers")
         
         // Create users, hunts, and bar crawls
-        let user = User(name: "Mike", email: "mike@example.com")
-        let hunt = Hunt(name: "Ship Exploration", huntDescription: "Explore the cruise ship", difficulty: "Medium")
-        let barCrawl = BarCrawl(name: "Deck Bars", barCrawlDescription: "Visit all bars on deck", theme: "Nautical")
+        let user = User(name: "Captain", email: "captain@ship.com")
+        let hunt = Hunt(name: "Ship Exploration", huntDescription: "Explore the ship", difficulty: "Medium")
+        let barCrawl = BarCrawl(name: "Ship Bars", barCrawlDescription: "Visit all bars on the ship", theme: "Nautical")
         
         // Insert into context
         context.insert(team)
@@ -208,59 +207,34 @@ class TeamTests: XCTestCase {
         context.insert(hunt)
         context.insert(barCrawl)
         
-        // Set up relationships
+        // Associate everything
         team.members = [user]
-        team.hunts = [hunt]
-        team.barCrawls = [barCrawl]
-        
-        // Set up inverse relationships
-        user.teams = [team]
-        hunt.team = team
-        barCrawl.team = team
+        team.activeHunt = hunt
+        team.barCrawl = barCrawl
         
         // Fetch the team
-        let teamDescriptor = FetchDescriptor<Team>()
-        let teams = try context.fetch(teamDescriptor)
+        let descriptor = FetchDescriptor<Team>()
+        let teams = try context.fetch(descriptor)
         
-        // Verify relationships are maintained
+        // Verify associations
         XCTAssertEqual(teams.count, 1)
         XCTAssertEqual(teams.first?.members?.count, 1)
-        XCTAssertEqual(teams.first?.hunts?.count, 1)
-        XCTAssertEqual(teams.first?.barCrawls?.count, 1)
+        XCTAssertNotNil(teams.first?.activeHunt)
+        XCTAssertNotNil(teams.first?.barCrawl)
         
-        // Fetch the user
-        let userDescriptor = FetchDescriptor<User>()
-        let users = try context.fetch(userDescriptor)
-        
-        // Verify inverse relationship
-        XCTAssertEqual(users.count, 1)
-        XCTAssertEqual(users.first?.teams?.count, 1)
-        XCTAssertEqual(users.first?.teams?.first?.name, "Cruise Explorers")
-        
-        // Fetch the hunt
-        let huntDescriptor = FetchDescriptor<Hunt>()
-        let hunts = try context.fetch(huntDescriptor)
-        
-        // Verify inverse relationship
-        XCTAssertEqual(hunts.count, 1)
-        XCTAssertEqual(hunts.first?.team?.name, "Cruise Explorers")
-        
-        // Fetch the bar crawl
-        let barCrawlDescriptor = FetchDescriptor<BarCrawl>()
-        let barCrawls = try context.fetch(barCrawlDescriptor)
-        
-        // Verify inverse relationship
-        XCTAssertEqual(barCrawls.count, 1)
-        XCTAssertEqual(barCrawls.first?.team?.name, "Cruise Explorers")
+        // Verify specific properties
+        XCTAssertEqual(teams.first?.members?.first?.name, "Captain")
+        XCTAssertEqual(teams.first?.activeHunt?.name, "Ship Exploration")
+        XCTAssertEqual(teams.first?.barCrawl?.name, "Ship Bars")
     }
     
     func testTeamSearching() throws {
-        let context = modelContainer.mainContext
+        let context = ModelContext(modelContainer)
         
         // Create teams
-        let team1 = Team(name: "Alpha Team")
-        let team2 = Team(name: "Beta Team")
-        let team3 = Team(name: "Alpha Squad")
+        let team1 = Team(name: "Alpha Team", creatorId: "user1")
+        let team2 = Team(name: "Beta Team", creatorId: "user2")
+        let team3 = Team(name: "Alpha Squad", creatorId: "user3")
         
         // Insert into context
         context.insert(team1)

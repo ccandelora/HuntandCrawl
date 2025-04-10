@@ -14,14 +14,14 @@ final class TaskCompletion {
     var verifiedBy: String?
     
     @Relationship(deleteRule: .noAction)
-    var task: Task?
+    var task: HuntTask?
     
     @Relationship(deleteRule: .noAction)
     var user: User?
     
     init(
         id: String = UUID().uuidString,
-        task: Task? = nil,
+        task: HuntTask? = nil,
         user: User? = nil,
         userId: String = "",
         completedAt: Date? = nil,

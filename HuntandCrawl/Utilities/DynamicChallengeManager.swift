@@ -8,7 +8,7 @@ class DynamicChallengeManager: ObservableObject {
     private var locationManager: LocationManager?
     
     // Published properties
-    @Published var pendingChallenges: [Task] = []
+    @Published var pendingChallenges: [HuntTask] = []
     @Published var lastChallengeGeneratedAt: Date?
     @Published var isGeneratingChallenge = false
     
@@ -38,8 +38,8 @@ class DynamicChallengeManager: ObservableObject {
     }
     
     // Generate a team challenge
-    func generateTeamChallenge(for hunt: Hunt, teamId: String) -> AnyPublisher<Task, Error> {
-        return Future<Task, Error> { [weak self] promise in
+    func generateTeamChallenge(for hunt: Hunt, teamId: String) -> AnyPublisher<HuntTask, Error> {
+        return Future<HuntTask, Error> { [weak self] promise in
             guard let self = self else {
                 promise(.failure(NSError(domain: "DynamicChallengeManager", code: 0, userInfo: [NSLocalizedDescriptionKey: "Self is nil"])))
                 return
@@ -56,23 +56,10 @@ class DynamicChallengeManager: ObservableObject {
             self.isGeneratingChallenge = true
             
             // Select a random challenge template
-            let challengeTitle = "Team Challenge: " + self.challengeTemplates.randomElement()!
+            let challengeTemplate = self.challengeTemplates.randomElement() ?? "Team Challenge"
+            let challengeTitle = "Team Challenge: " + challengeTemplate
             
-            // Create the challenge task
-            let task = Task(
-                title: challengeTitle,
-                taskDescription: "Complete this challenge with your team members!",
-                points: Int.random(in: 50...150),
-                verificationMethod: .photo,
-                latitude: self.locationManager?.userLocation?.coordinate.latitude,
-                longitude: self.locationManager?.userLocation?.coordinate.longitude,
-                order: (hunt.tasks?.count ?? 0) + 1
-            )
-            
-            // Set hunt relationship
-            task.hunt = hunt
-            
-            // Add team and time metadata as persistent notes
+            // Add team and time metadata as subtitle
             let metadataNote = """
             Team Challenge:
             - Team ID: \(teamId)
@@ -81,8 +68,21 @@ class DynamicChallengeManager: ObservableObject {
             - Requires \(self.minimumTeamMembersRequired) team members
             """
             
-            // Store this metadata in an existing field like subtitle or in a new field if available
-            task.subtitle = metadataNote
+            // Create the challenge task with proper parameters
+            let task = HuntTask(
+                title: challengeTitle,
+                subtitle: metadataNote,
+                taskDescription: "Complete this challenge with your team members!",
+                points: Int.random(in: 50...150),
+                verificationMethod: .photo,
+                deckNumber: Int.random(in: 7...15), // Random deck for cruise ship challenge
+                locationOnShip: ["Main Dining", "Pool Deck", "Theater", "Casino", "Buffet"].randomElement() ?? "Main Lobby",
+                section: ["Forward", "Midship", "Aft"].randomElement() ?? "Midship",
+                order: (hunt.tasks?.count ?? 0) + 1
+            )
+            
+            // Set hunt relationship
+            task.hunt = hunt
             
             // Add it to the hunt
             hunt.tasks?.append(task)
@@ -110,7 +110,7 @@ class DynamicChallengeManager: ObservableObject {
     }
     
     // Check if a challenge is eligible for completion
-    func isEligibleForCompletion(task: Task) -> Bool {
+    func isEligibleForCompletion(task: HuntTask) -> Bool {
         // Parse metadata from subtitle to check dynamic status, expiration, etc.
         guard let subtitle = task.subtitle,
               subtitle.contains("Team Challenge:"),
@@ -124,7 +124,7 @@ class DynamicChallengeManager: ObservableObject {
     }
     
     // Helper function to check if task is expired based on metadata
-    private func isExpired(task: Task) -> Bool {
+    private func isExpired(task: HuntTask) -> Bool {
         guard let subtitle = task.subtitle else { return false }
         
         // Extract expiration time from metadata
@@ -147,7 +147,7 @@ class DynamicChallengeManager: ObservableObject {
     }
     
     // Get team ID from task metadata
-    private func getTeamId(from task: Task) -> String? {
+    private func getTeamId(from task: HuntTask) -> String? {
         guard let subtitle = task.subtitle else { return nil }
         
         // Extract team ID from metadata
@@ -162,11 +162,11 @@ class DynamicChallengeManager: ObservableObject {
     }
     
     // Fetch active team challenges for a team
-    func fetchActiveChallengesForTeam(_ teamId: String) -> [Task] {
+    func fetchActiveChallengesForTeam(_ teamId: String) -> [HuntTask] {
         do {
             // We can't use predicate directly on our custom properties
             // So we fetch all tasks and filter them
-            let descriptor = FetchDescriptor<Task>()
+            let descriptor = FetchDescriptor<HuntTask>()
             let allTasks = try modelContext.fetch(descriptor)
             
             return allTasks.filter { task in
